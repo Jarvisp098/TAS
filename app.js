@@ -22,13 +22,14 @@ app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 mongoose.connect(process.env.MONGO_URI)
 .then( async() => { 
     console.log('Connected to MongoDB Database');
-    await initializeDatabase();
+    //await initializeDatabase();
  })
 .catch((err) => { console.log(`Error connecting to database: ${err}`) });
 
 //View engines
 app.set('view engine', 'ejs');
-app.set('views', './views');
+app.set('views', __dirname + '/views');
+
 
 //Middlewares
 app.use(express.static('public'));

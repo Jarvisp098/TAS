@@ -14,19 +14,19 @@ mongoose.connect(process.env.MONGO_URI)
       const students = JSON.parse(data);
 
       for (const student of students) {
-        const hashedPassword = await bcrypt.hash('defaultPassword', 10); // Hash a default password - CHANGE THIS!
+        const hashedPassword = await bcrypt.hash('defaultPassword', 10); // Or generate a random password
 
-        const existingStudent = await StudentRecord.findOne({ email: student.email });
+         // Check if the student already exists
+         const existingStudent = await StudentRecord.findOne({ email: student.email });
 
-        if(!existingStudent){
-                await StudentRecord.create({
-                name: student.name,
-                email: student.email,
-                password: hashedPassword, // Store the hashed password
-                role: 'student'  //  Add the role directly during import
+         if (!existingStudent) { // If student doesn't exist, create new student with password
+              await StudentRecord.create({
+                 name: student.name,
+                 email: student.email,
+                 password: hashedPassword,     // <-- This is crucial!
+                 role: 'student'           
               });
-        }
-
+          } 
       }
       console.log('Students imported successfully!');
       process.exit(0); // Exit the script after import

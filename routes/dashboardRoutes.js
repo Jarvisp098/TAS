@@ -11,8 +11,8 @@ const dashboardController = require('../controllers/dashboardController');
 
 //Database Connection (Move this to db.js and require that here)
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('Error connecting to MongoDB:', err));

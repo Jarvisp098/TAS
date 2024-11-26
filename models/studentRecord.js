@@ -22,6 +22,10 @@ const studentRecordSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    password: { 
+        type: String, required: true 
+    },
+    
     attendance: {
         type: [attendanceSchema],
         default: [],
