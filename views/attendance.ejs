@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        /* Ensure canvas handles overflow and fits properly */
+        canvas {
+            width: 100% !important; /* Ensure the canvas resizes correctly */
+            height: 500px !important; /* Set a fixed height */
+            display: block; /* Prevent extra space below the canvas */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="/images/rdplogo.png" alt="Logo" height="80">
+    <form id="logout" action="/logout" method="GET" class="logout-form">
+        <button type="submit">Logout</button>
+    </form>
+</header>
+
+<section>
+    <div id="canvasContainer"><canvas id = "attendanceChart"></canvas> </div>
+
+    <form id="attendForm" action="/updatestudent" method="POST">
+        <table id="table">
+            <caption>
+                <p>Student Attendance</p>
+            </caption>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% students.forEach((record) => { %>
+                    <tr>
+                        <% if (record.attendanceCount <= maxAttendanceCount) { %>
+                            <td><%= record.name %> <i class="fa-solid fa-triangle-exclamation" style="color:red; font-size:12px; padding:5px;">&nbsp;Falling Behind</i></td>
+                        <% } else { %>
+                            <td><%= record.name %></td>
+                        <% } %>
+                        <td><%= record.email %></td>
+                        <td>
+                            <input class="checky" type="checkbox" id="attendance_<%= record._id %>" name="attendance[]" value="<%= record._id %>">
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <div id="attendanceActions">
+            <label for="date">Choose a Date:</label>
+            <input type="date" id="date" name="attendanceDate" min="<%= new Date().toISOString().split('T')[0] %>" required>
+            
+            <% if (students.length !== 0) { %>
+                <div id="buttonContainer">
+                    <button type="submit">Submit Attendance</button>
+                    <button type="button" id="checkAllButton">Check All</button>
+                </div>
+            <% } else { %>
+                <p>No students added yet.</p>
+            <% } %>
+        </div>
+    </form>
+    <form id="delete" action="/delete" method="post">
+        <button type="submit">Delete All</button>
+    </form>
+</section>
+
+<section>
+    <form id="add-student-form" action="/addstudent" method="POST">
+        <h3>Add a Student</h3>
+        <input type="text" id="name" name="name" placeholder="Name" required>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <button type="submit">Add</button>
+    </form>
+</section>
+
+<section>
+    <form id="delete-student-form" action="/deletestudent" method="POST">
+        <h3>Delete a Student</h3>
+        <input type="text" id="name" name="name" placeholder="Name" required>
+        <button type="submit">Delete</button>
+        <div id="deletenotification"><i class="fa-solid fa-check"></i>&nbsp;Student successfully deleted!</div>
+    </form>
+</section>
+
+<script src="/js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Parse the JSON data
+        const studentsData = JSON.parse('<%- JSON.stringify(students) %>');
+        const dates = [...new Set(studentsData.flatMap(student => student.attendance.map(record => new Date(record.date).toISOString().split('T')[0])))];
+
+        // Prepare data for the bar chart
+        const data = {
+            labels: dates,
+            datasets: studentsData.map(student => ({
+                label: student.name,
+                data: dates.map(date => {
+                    return student.attendance.some(record => new Date(record.date).toISOString().split('T')[0] === date) ? 1 : 0;
+                }),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }))
+        };
+
+        // Initialize Chart.js bar chart
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dates'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Attendance'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: context => {
+                                const studentName = context.dataset.label;
+                                const date = context.label;
+                                return `${studentName} was ${context.raw === 1 ? 'Present' : 'Absent'} on ${date}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // "Check All" button event listener
+        document.getElementById('checkAllButton').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('#table tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

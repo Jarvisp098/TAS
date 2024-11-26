@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Light gray background */
+        }
+        .container {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #3e8e41; /* Darker green on hover */
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Student!</h1>
+        <button onclick="joinLecture()">Join Lecture</button>
+
+    </div>
+
+    <script>
+        function joinLecture() {
+            // ... (get formattedDateTime as before) ...
+            console.log("Join Lecture button clicked"); 
+            const now = moment();
+            const formattedDateTime = now.format('YYYY-MM-DD HH:mm:ss');
+            console.log("Formatted Date Time:", formattedDateTime); // Verify the format
+
+            fetch('/joinLecture', {  // Changed to '/joinLecture'
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ joinTime: formattedDateTime })
+            })
+            .then(response => response.json()) // Parse JSON response
+            .then(data => {
+              if (data.message === 'Join successful') {
+                alert('Joined successfully at ' + data.joinTime);  // Display confirmation (no redirect)
+                // Optionally, you could redirect to another existing page here.
+              } else {
+                console.error('Error joining lecture');
+              }
+            })
+            .catch(error => {
+                console.error('Error joining lecture', error);
+            });
+          }
+    </script>
+
+</body>
+</html>
