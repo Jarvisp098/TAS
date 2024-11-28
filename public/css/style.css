@@ -1,26 +1,27 @@
 @import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
 @import url(https://fonts.googleapis.com/css?family=Titillium+Web:300);
+
 .fa-2x {
   font-size: 2em;
 }
 
 header {
-    position: fixed; /* Keep the header at the top */
+    position: fixed; 
     top: 0;
     left: 0;
-    width: 100%; /* Full width */
-    background-color: #3D9970; /* Dark background color */
-    color: white; /* White text */
-    text-align: center; /* Center align text */
-    padding: 5px 0; /* Add some padding for better spacing */
+    width: 100%; 
+    background-color: #3D9970; 
+    color: white; 
+    font-weight: bold;
+    text-align: center; 
+    padding: 5px 0; 
     font-family: 'Titillium Web', sans-serif;
-    font-size: 14px; /* Adjust font size */
-    z-index: 1000; /* Ensure it's above other content */
+    font-size: 14px; 
+    z-index: 1000; 
 }
 
-/* To give space below the header */
 body {
-    margin-top: 70px; /* Adjust the margin to make space for the header */
+    margin-top: 70px; 
 }
 
 .fa {
@@ -33,19 +34,19 @@ body {
   font-size: 50px;
 }
 
+
 .main-menu {
   background: #2C3E50;
   border-right: 1px solid #e5e5e5;
   position: fixed;
-  top: 90px;
+  top: 90px; 
   bottom: 0;
-  height: 100%;
+  height: calc(100vh - 70px); 
   left: 0;
-  width: 250px; /* Adjust width to always show text */
+  width: 250px; 
   overflow: hidden;
-  -webkit-transition: width .05s linear;
-  transition: width .05s linear;
-  -webkit-transform: translateZ(0) scale(1,1);
+  -webkit-transition: width .3s ease;
+  transition: width .3s ease;
   z-index: 1000;
 }
 
@@ -91,13 +92,29 @@ body {
   width: 190px;
   font-family: 'Titillium Web', sans-serif;
   color: #ffffff;
+  cursor: pointer;
+  background-color: transparent;
 }
 
 .main-menu>ul.logout {
   position: absolute;
-  top: 680px;
-  left: 0;
   bottom: 0;
+  left: 0;
+  background-color: transparent !important;
+}
+
+.logout form button {
+  background-color: transparent; /* Ensure the background is transparent */
+  border: none; /* Remove default border */
+  color: white; /* Keep text color white */
+  cursor: pointer; /* Show pointer on hover */
+  text-align: center;
+  width: 100%; /* Make it fill the list item's width */
+  padding: 15px 0; /* Add consistent padding */
+}
+
+.logout form button:hover {
+  background-color: #e74c3c; /* Add hover effect if desired */
 }
 
 .no-touch .scrollable.hover {
@@ -128,7 +145,31 @@ nav ul, nav li {
   padding: 0;
 }
 
+.sidebar-hidden {
+  width: 60px; 
+  opacity: 1; 
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
 
+.sidebar-hidden ul li .nav-text{
+  display: none;
+}
+
+.sidebar-hidden ul li .fa{
+  display: block;
+}
+
+.sidebar-shown {
+  width: 250px;  
+  opacity: 1; 
+  transition: width 0.3s ease; 
+}
+
+.container {
+  transition: margin-left 0.3s ease; 
+  margin-left: 60px; 
+}
 
 @font-face {
   font-family: 'Titillium Web';
@@ -138,35 +179,48 @@ nav ul, nav li {
 }
 
 .main-container {
-  margin-left: 250px; /* Leave space for the side navigation bar */
-  height: calc(100vh - 70px); /* Full height minus the header height */
+  margin-left: 60px; 
+  height: calc(100vh - 70px); 
   display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  background-color: white; /* Remove the grey color */
-  overflow: hidden; /* Prevent scrolling if unnecessary */
+  justify-content: center; 
+  align-items: center; 
+  background-color: white; 
+  overflow: hidden; 
 }
 
-#course-selection {
+#welcome-message {
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 15px; /* Add spacing between buttons */
+  justify-content: center;
+  align-items: center;
+  height: 100%;  /* Ensures it's centered vertically and horizontally */
+  text-align: center;  /* Centers the text horizontally */
 }
 
-#course-selection button {
-  background-color: #05659e; /* Button color */
+.cards {
+  display: flex;
+  justify-content: center; /* Center the cards */
+  gap: 20px; /* Add spacing between cards */
+  padding: 20px;
+}
+.card {
+  flex: 0 1 150px; /* Set a fixed width with flexibility */
+  padding: 15px; /* Add inner spacing */
+  text-align: center; /* Center text inside the card */
+  border-radius: 8px; /* Slightly rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+.card-blue { background-color: #007bff; color: #ffffff; font-size: larger ;font-weight: bold; }
+.card-green { background-color: #28a745; color: #ffffff; font-size: larger ;font-weight: bold; }
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+.btn {
+  padding: 10px 20px;
   color: white;
   border: none;
-  padding: 10px 15px; /* Adjust padding for better spacing */
-  font-size: 14px;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: auto; /* Allow the button width to fit the text */
-  white-space: nowrap; /* Prevent text wrapping */
 }
-
-#course-selection button:hover {
-  background-color: #045180; /* Darker shade for hover */
-}
-
+.btn-primary { background-color: #007bff; }
+.btn-secondary { background-color: #6c757d; }

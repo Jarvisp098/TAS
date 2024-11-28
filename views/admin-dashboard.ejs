@@ -1,54 +1,39 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Attendance System</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-  </head>
-  <body>
-    <div class="area"></div>
-    <header>
-      <h1>Time Management System</h1>
-    </header>
-    <nav class="main-menu">
-      <ul>
-        <li id="dashboard-link">
-            <i class="fa fa-home fa-2x"></i>
-            <span class="nav-text">
-              Dashboard
-            </span>
-          </a>
-        </li>
-
-      </ul>
-      <ul>    
-        <li>
-            <i class="fa fa-book fa-2x"></i>
-            <span class="nav-text">
-              Report
-            </span>
-          </a>
-        </li>
-      </ul>
-    
-      <ul class="logout">
-        <li>
-          <form action="/logout" method="GET" class="logout-form">
-            <button type="submit" style="background: none; color: white; font-size: 16px; font-weight: bold; border: none; padding: 0; cursor: pointer;">
-              <i class="fa fa-power-off fa-2x"></i>
-              <span class="nav-text">Logout</span>
-            </button>
-          </form>
-        </li>  
-      </ul>
-    </nav>
-
+</head>
+<body>
+  <header>
+    <h1>Time Management System</h1>
+  </header>
+  <nav class="main-menu sidebar-hidden">
+    <ul>
+      <li>
+        <i class="fa fa-home fa-2x"></i>
+        <span class="nav-text">Dashboard</span>
+      </li>
+      <li>
+        <i class="fa fa-book fa-2x"></i>
+        <span class="nav-text">Report</span>
+      </li>
+      <li class="logout">
+        <form action="/logout" method="GET">
+          <button type="submit">
+            <i class="fa fa-power-off fa-2x"></i>
+            <span class="nav-text">Logout</span>
+          </button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+  <div class="container">
     <div id="welcome-message">
       <h2>Welcome to TAS</h2>
     </div>
-
-    <div id="course-selection">
-      <button onclick="selectCourse('Maths', '/selectCourse1')">Select Course 1</button>
-      <button onclick="selectCourse('Baiology', '/selectCourse2')">Select Course 2</button>
-    </div>
-    
     <script>
       function selectCourse(courseName, route) {
         fetch(route, {
@@ -60,17 +45,51 @@
         })
         .then(response => response.json())
         .then(data => {
-            window.location.href = '/admin-dashboard'; // Or wherever you want to redirect
+            window.location.href = '/admin-dashboard'; 
         })
         .catch(error => {
           console.error('Error:', error);
         });
       }
-
       document.getElementById('dashboard-link').addEventListener('click', function() {
       document.getElementById('welcome-message').style.display = 'none';
-      document.getElementById('course-selection').style.display = 'flex'; // Or 'block'
+      document.getElementById('course-selection').style.display = 'flex'; 
     });
     </script>
-  </body>
+    <div class="header">
+      <h3>Dashboard</h3>
+    </div>
+    <div class="cards">
+      <div class="card card-blue">
+        <h3>30</h3>
+        <p>Total Students</p>
+      </div>
+      <div class="card card-green">
+        <h3>53%</h3>
+        <p>Attendance</p>
+      </div>
+    </div>
+    <div class="buttons">
+      <button class="btn btn-primary">Java</button>
+      <button class="btn btn-secondary">Python</button>
+    </div>
+  </div>
+  <script>
+    const sidebar = document.querySelector('.main-menu');
+    let timeoutId = null; 
+
+    sidebar.addEventListener('mouseover', () => {
+        sidebar.classList.remove('sidebar-hidden');
+        sidebar.classList.add('sidebar-shown');
+        clearTimeout(timeoutId); 
+    });
+
+    sidebar.addEventListener('mouseout', () => {
+        timeoutId = setTimeout(() => {
+            sidebar.classList.remove('sidebar-shown');
+            sidebar.classList.add('sidebar-hidden');
+        }, 600); 
+    });
+  </script>
+</body>
 </html>
