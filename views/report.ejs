@@ -1,0 +1,25 @@
+<!-- report.ejs -->
+<h1>Attendance Report</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Total Attendance</th>
+            <th>Attendance Times</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% reportData.forEach(studentData => { %>
+            <tr>
+                <td><%= studentData.student %></td>
+                <td><%= studentData.totalAttendance %></td>
+                <td>
+                    <% studentData.attendances.forEach(attendance => { %>
+                        <p><%= attendance %></p>
+                    <% }); %>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
+

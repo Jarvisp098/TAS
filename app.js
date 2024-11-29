@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes.js');
 const studentRoutes = require('./routes/studentRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const studentCountRoutes = require('./routes/studentCount');
+const Attendance = require('./models/attendance');
 
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3000;
@@ -84,6 +85,65 @@ app.get('/api/getStudentCount', async (req, res) => {
             res.status(500).json({ message: 'Error joining lecture' });
           });
   });
+
+  app.get('/generateReport', async (req, res) => {
+    try {
+        const { subject, fromDate, toDate } = req.query; // Get filter parameters from query string
+
+
+        // Build the filter query based on input
+        const filter = {};
+        if (subject) {
+          filter.subject = subject;
+        }
+        if (fromDate) {
+          filter.joinTime = { $gte: fromDate }; // Assumes joinTime is stored as String
+        }
+        if (toDate) {
+          if (filter.joinTime) {
+            filter.joinTime.$lte = toDate;
+          } else {
+            filter.joinTime = { $lte: toDate };
+          }
+        }
+
+
+        const attendanceData = await Attendance.find(filter);
+        const reportData = processAttendanceData(attendanceData);
+        res.render('report', { reportData, subject, fromDate, toDate }); // Render the 'report.ejs' template
+
+    } catch (error) {
+        console.error("Error generating report:", error);
+        res.status(500).send("Error generating report");
+    }
+});
+
+
+function processAttendanceData(attendanceData) {
+
+    const groupedData = {};
+
+
+    attendanceData.forEach(record => {
+        const student = record.studentEmail;  // Change to studentName if that's the identifier for uniqueness
+        if (!groupedData[student]) {
+            groupedData[student] = [];
+        }
+        groupedData[student].push(record);
+    });
+
+
+
+    //Transforming data to the desired format
+    const formattedReportData = Object.keys(groupedData).map(student => ({
+      student: student,
+      attendances: groupedData[student].map(attendance => moment(attendance.joinTime).format('YYYY-MM-DD HH:mm:ss')), // Format date as needed
+      totalAttendance: groupedData[student].length
+    }));
+
+    return formattedReportData;
+}
+
   
   app.get('/getAttendanceData', async (req, res) => {
     try {

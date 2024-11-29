@@ -1,76 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0; /* Light gray background */
-        }
-        .container {
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50; /* Green */
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #3e8e41; /* Darker green on hover */
-        }
-
-
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome, <%= studentName %>!</h1> 
-        <button onclick="joinLecture('Java')">Join Java Lecture</button>
-        <button onclick="joinLecture('Python')">Join Python Lecture</button>
+    <header>
+        <h1>Student Dashboard</h1>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="main-menu">
+        <ul>
+            <li>
+                <a href="#" onclick="showSection('home')">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showSection('joinLecture')">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Join Lecture</span>
+                </a>
+            </li>
+            <li id="logout">
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Area to trigger sidebar hover effect -->
+    <div class="sidebar-hover-area"></div>
+
+    <div id="content">
+        <div id="home" class="section">
+            <h2>Welcome to the Student Dashboard</h2>
+            <p>Here you can view available lectures and join them.</p>
+        </div>
+
+        <div id="joinLecture" class="section">
+            <h2>Join a Lecture</h2>
+            <button onclick="joinLecture()">Join Now</button>
+        </div>
     </div>
 
     <script>
-        function joinLecture(subject) {
-            const now = moment();
-            const formattedDateTime = now.format('YYYY-MM-DD HH:mm:ss');
-
-            fetch('/joinLecture', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    joinTime: formattedDateTime,
-                    subject: subject,
-                    studentName: '<%= user.name %>',    // Accessing name directly from user object
-                    studentEmail: '<%= user.email %>' 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Join successful') {
-                    alert(`Joined ${subject} successfully at ${data.joinTime}`);
-                } else {
-                    console.error('Error joining lecture');
-                }
-            })
-            .catch(error => {
-                console.error('Error joining lecture', error);
-            });
+        // Function to join a lecture (for example, sending a timestamp)
+        function joinLecture() {
+            const timestamp = new Date().toISOString();
+            alert(`You have joined the lecture at ${timestamp}`);
         }
+
+        // Function to show the active section
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+                activeSection.style.display = 'block';
+            }
+        }
+
+        // Add event listener for hovering the sidebar hover area
+        const sidebar = document.querySelector('.main-menu');
+        const hoverArea = document.querySelector('.sidebar-hover-area');
+        
+        hoverArea.addEventListener('mouseenter', () => {
+            sidebar.classList.remove('collapsed');
+        });
+
+        sidebar.addEventListener('mouseenter', () => {
+            sidebar.classList.remove('collapsed');
+        });
+
+        hoverArea.addEventListener('mouseleave', () => {
+            sidebar.classList.add('collapsed');
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            sidebar.classList.add('collapsed');
+        });
+
+        window.onload = function() {
+            showSection('home');
+        };
     </script>
 </body>
 </html>
