@@ -136,7 +136,8 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: userIdForJWT, role: user.role }, 'seceret_key');
         res.cookie('jwt', token, { maxAge: 5 * 60 * 1000, httpOnly: true, secure: true }); // Secure for HTTPS
 
-        res.render(redirectPath, { user, studentName: userName });
+         res.render(redirectPath, { user, studentName: userName, studentEmail: user.email });
+        
 
     } catch (error) {
         console.error("Login Error:", error);

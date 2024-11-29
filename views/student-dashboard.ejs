@@ -40,36 +40,37 @@
 <body>
     <div class="container">
         <h1>Welcome, <%= studentName %>!</h1> 
-        <button onclick="joinLecture()">Join Lecture</button>
+        <button onclick="joinLecture('Java')">Join Java Lecture</button>
+        <button onclick="joinLecture('Python')">Join Python Lecture</button>
     </div>
 
     <script>
-        function joinLecture() {
-            // ... (get formattedDateTime as before) ...
-            console.log("Join Lecture button clicked"); 
+        function joinLecture(subject) {
             const now = moment();
             const formattedDateTime = now.format('YYYY-MM-DD HH:mm:ss');
-            console.log("Formatted Date Time:", formattedDateTime); // Verify the format
 
-            fetch('/joinLecture', {  // Changed to '/joinLecture'
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ joinTime: formattedDateTime })
+            fetch('/joinLecture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    joinTime: formattedDateTime,
+                    subject: subject,
+                    studentName: '<%= user.name %>',    // Accessing name directly from user object
+                    studentEmail: '<%= user.email %>' 
+                })
             })
-            .then(response => response.json()) // Parse JSON response
+            .then(response => response.json())
             .then(data => {
-              if (data.message === 'Join successful') {
-                alert('Joined successfully at ' + data.joinTime);  // Display confirmation (no redirect)
-                // Optionally, you could redirect to another existing page here.
-              } else {
-                console.error('Error joining lecture');
-              }
+                if (data.message === 'Join successful') {
+                    alert(`Joined ${subject} successfully at ${data.joinTime}`);
+                } else {
+                    console.error('Error joining lecture');
+                }
             })
             .catch(error => {
                 console.error('Error joining lecture', error);
             });
-          }
+        }
     </script>
-
 </body>
 </html>

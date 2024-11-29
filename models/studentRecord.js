@@ -30,6 +30,12 @@ const studentRecordSchema = new mongoose.Schema({
         type: [attendanceSchema],
         default: [],
     },
+
+    course: {
+        type: String, // or enum if needed
+        required: true // If it must be selected
+    },
+    role: { type: String, default: 'student' }
 });
 
 const StudentRecord = mongoose.model('StudentRecord', studentRecordSchema);

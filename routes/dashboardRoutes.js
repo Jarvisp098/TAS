@@ -7,7 +7,7 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
 const dashboardController = require('../controllers/dashboardController');
-
+const enrollmentCountsRoutes = require('./studentCount');
 
 //Database Connection (Move this to db.js and require that here)
 mongoose.connect(process.env.MONGO_URI, {

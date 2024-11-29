@@ -26,5 +26,23 @@ exports.selectCourse2 = async (req, res) => {
     }
 };
 
+exports.markJavaAttendance = async (req, res) => {
+    try {
+        const user = await StudentRecord.findById(req.user.id);
+        if (!user) { // Handle the case where user might not be found
+          return res.status(404).send("User not found");
+        }
+        user.javaAttendance.push({
+            date: new Date(),
+            name: req.user.name, // Assuming req.user.name contains the name
+            email: req.user.email, // Assuming req.user.email contains the email
+        });
+        await user.save();
+        res.redirect('/student-dashboard'); 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
-// Similarly for selectCourse2
+

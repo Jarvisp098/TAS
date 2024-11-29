@@ -203,14 +203,51 @@ nav ul, nav li {
   padding: 20px;
 }
 .card {
-  flex: 0 1 150px; /* Set a fixed width with flexibility */
-  padding: 15px; /* Add inner spacing */
-  text-align: center; /* Center text inside the card */
-  border-radius: 8px; /* Slightly rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  flex: 0 1 150px;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px; /* Ensure the card has a fixed height */
 }
-.card-blue { background-color: #007bff; color: #ffffff; font-size: larger ;font-weight: bold; }
-.card-green { background-color: #28a745; color: #ffffff; font-size: larger ;font-weight: bold; }
+
+.card-blue {
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: larger;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;  /* Align text vertically */
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ensure background color fills the entire card */
+  padding: 10px;
+}
+
+.card-green {
+  background-color: #28a745;
+  color: #ffffff;
+  font-size: larger;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column; /* Align text vertically */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 10px;
+}
+
+.card-text {
+  font-size: 24px; /* Make the number larger */
+}
+
+.card-title {
+  font-size: 16px; /* Make the text smaller */
+}
+
 .buttons {
   display: flex;
   justify-content: space-between;
@@ -223,4 +260,4 @@ nav ul, nav li {
   cursor: pointer;
 }
 .btn-primary { background-color: #007bff; }
-.btn-secondary { background-color: #6c757d; }
+.btn-secondary { background-color: #28a745; }

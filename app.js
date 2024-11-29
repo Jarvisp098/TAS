@@ -9,6 +9,8 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes.js');
 const studentRoutes = require('./routes/studentRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const studentCountRoutes = require('./routes/studentCount');
+
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3000;
 const moment = require('moment');
@@ -42,6 +44,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use('/', authRoutes);
 app.use('/', studentRoutes);
 app.use('/', dashboardRoutes);
+app.use('/api', studentCountRoutes);
 
 
 app.use((err, req, res, next) =>{
@@ -49,6 +52,47 @@ app.use((err, req, res, next) =>{
     res.status(500).send('Internal Server Error');
     next();
 });
+
+app.get('/api/getStudentCount', async (req, res) => {
+    try {
+      const totalStudents = await StudentRecord.countDocuments({});
+      res.json({ totalStudents });
+    } catch (error) {
+      console.error('Error fetching student count:', error);
+      res.status(500).json({ error: 'Failed to fetch student count' });
+    }
+  });
+  
+  
+  app.post('/joinLecture', (req, res) => {
+      const { joinTime, subject, studentName, studentEmail } = req.body;
+      const attendanceRecord = {
+          studentName: studentName,
+          studentEmail: studentEmail,
+          subject: subject,
+          joinTime: joinTime
+        };
+        // Assuming you have a MongoDB connection and a model named 'Attendance'
+        const Attendance = require('./models/studentRecord');
+  
+        const newAttendance = new Attendance(attendanceRecord);
+        newAttendance.save()
+          .then(savedRecord => {
+              res.json({ message: 'Join successful', joinTime: joinTime });
+          })
+          .catch(error => {
+            res.status(500).json({ message: 'Error joining lecture' });
+          });
+  });
+  
+  app.get('/getAttendanceData', async (req, res) => {
+    try {
+      const attendanceData = await Attendance.find({}); // Get all attendance records
+      res.json(attendanceData); 
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching data' });
+    }
+  });
 
 app.get('/', (req, res) => {
     res.render('login'); 

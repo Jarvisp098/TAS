@@ -20,6 +20,51 @@ body {
     flex-direction: column; /* Align children vertically */
     justify-content: center; /* Center children vertically */
 }
+
+#registerContainer {
+    width: 80%;
+    max-width: 300px;
+    min-height: 400px;  /* Adjust as needed */
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#registerContainer input[type="submit"] { /* Target the submit button */
+    border: none;
+    border-radius: 4px; /* Or 25px if you want the rounded look */
+    cursor: pointer;
+    font-size: 14px; /* Adjust as needed */
+    background: blue; 
+    border-radius: 25px;
+    width: 100%;
+    color: #fff;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px; /* Add margin if needed */
+}
+
+
+#registerContainer input[type="submit"]:hover {
+    background: #0D8CEA; /* Slightly darker blue on hover */
+}
+
+#registerContainer input {  /* Target register inputs only */
+    margin-top: 0px; /* Remove the margin */
+  }
+  
+  #registerContainer label { /* Target labels only */
+    margin-bottom: 1px; /* Add margin between label and input if needed */
+  }
+  
+
 #login{
     border: none;
     border-radius: 4px;
@@ -43,7 +88,7 @@ h3 {
 
 label {
     margin-top:5px;
-    color:#fff;
+    color: black;
     display: block;
     font-weight: bold;
     font-size: 0.9rem; /* Relative font size */
@@ -122,7 +167,7 @@ button:hover {
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
-    #loginContainer {
+    #loginContainer, #registerContainer {
         margin: 50px auto; /* Adjust margin for smaller screen sizes */
         padding: 10px; /* Reduce padding for smaller screen sizes */
     }
