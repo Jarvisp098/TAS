@@ -10,8 +10,8 @@ const authRoutes = require('./routes/authRoutes.js');
 const studentRoutes = require('./routes/studentRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const studentCountRoutes = require('./routes/studentCount');
-const Attendance = require('./models/attendance');
-
+const LectureAttendance = require('./models/lectureAttendance'); // Use LectureAttendance instead
+const StudentRecord = require('./models/studentRecord');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3000;
 const moment = require('moment');
@@ -65,50 +65,45 @@ app.get('/api/getStudentCount', async (req, res) => {
   });
   
   
-  app.post('/joinLecture', (req, res) => {
-      const { joinTime, subject, studentName, studentEmail } = req.body;
-      const attendanceRecord = {
-          studentName: studentName,
-          studentEmail: studentEmail,
-          subject: subject,
-          joinTime: joinTime
-        };
-        // Assuming you have a MongoDB connection and a model named 'Attendance'
-        const Attendance = require('./models/studentRecord');
-  
-        const newAttendance = new Attendance(attendanceRecord);
-        newAttendance.save()
-          .then(savedRecord => {
-              res.json({ message: 'Join successful', joinTime: joinTime });
-          })
-          .catch(error => {
-            res.status(500).json({ message: 'Error joining lecture' });
-          });
-  });
+  app.post('/joinLecture', async (req, res) => {
+    const { joinTime, subject, studentName, studentEmail } = req.body;
+    
+    const attendanceRecord = {
+        studentId: studentEmail, // Assuming you will store email or student ID
+        joinTime: joinTime,
+        course: subject // Change 'subject' to 'course' if needed
+    };
+
+    try {
+        const newAttendance = new LectureAttendance(attendanceRecord);
+        await newAttendance.save();
+        res.json({ message: 'Join successful', joinTime: joinTime });
+    } catch (error) {
+        res.status(500).json({ message: 'Error joining lecture' });
+    }
+});
 
   app.get('/generateReport', async (req, res) => {
     try {
         const { subject, fromDate, toDate } = req.query; // Get filter parameters from query string
 
-
         // Build the filter query based on input
         const filter = {};
         if (subject) {
-          filter.subject = subject;
+            filter.course = subject; // Assuming you have a 'course' field in LectureAttendance
         }
         if (fromDate) {
-          filter.joinTime = { $gte: fromDate }; // Assumes joinTime is stored as String
+            filter.joinTime = { $gte: new Date(fromDate) }; // Ensure proper date format
         }
         if (toDate) {
-          if (filter.joinTime) {
-            filter.joinTime.$lte = toDate;
-          } else {
-            filter.joinTime = { $lte: toDate };
-          }
+            if (filter.joinTime) {
+                filter.joinTime.$lte = new Date(toDate);
+            } else {
+                filter.joinTime = { $lte: new Date(toDate) };
+            }
         }
 
-
-        const attendanceData = await Attendance.find(filter);
+        const attendanceData = await LectureAttendance.find(filter); // Use LectureAttendance model
         const reportData = processAttendanceData(attendanceData);
         res.render('report', { reportData, subject, fromDate, toDate }); // Render the 'report.ejs' template
 
@@ -143,16 +138,6 @@ function processAttendanceData(attendanceData) {
 
     return formattedReportData;
 }
-
-  
-  app.get('/getAttendanceData', async (req, res) => {
-    try {
-      const attendanceData = await Attendance.find({}); // Get all attendance records
-      res.json(attendanceData); 
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching data' });
-    }
-  });
 
 app.get('/', (req, res) => {
     res.render('login'); 

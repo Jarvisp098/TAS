@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
 const dashboardController = require('../controllers/dashboardController');
 const enrollmentCountsRoutes = require('./studentCount');
+const LectureAttendance = require('../models/lectureAttendance');
 
 //Database Connection (Move this to db.js and require that here)
 mongoose.connect(process.env.MONGO_URI, {
@@ -16,41 +17,6 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('Error connecting to MongoDB:', err));
-
-// Define your schema (Move this to a models folder in a file like lectureAttendance.js and require the same here)
-const LectureAttendanceSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // 'User' should be your User model
-    joinTime: { type: Date, required: true }
-});
-
-const LectureAttendance = mongoose.model('LectureAttendance', LectureAttendanceSchema);
-
-
-// router.get('/admin-dashboard', authMiddleware, (req, res) => {
-//     console.log(req.user);
-//     if (!req.user) { // Check if the user object exists in the request
-//         return res.redirect('/login'); // Redirect to login if not authenticated
-//     }
-
-//     if (req.user.role !== 'admin'){
-//         return res.redirect('/student-dashboard'); // Redirect if not an admin
-//     }
-
-//     res.render('admin-dashboard');
-// });
-
-// router.get('/student-dashboard', authMiddleware, (req, res) => {
-//     console.log(req.user);
-//     if (!req.user) {
-//         return res.redirect('/login');
-//     }
-
-
-//     if (req.user.role !== 'student'){
-//         return res.redirect('/admin-dashboard'); // Redirect if not a student
-//     }
-//     res.render('student-dashboard');
-// });
 
 router.get('/admin-dashboard', authMiddleware, (req, res) => {  // Middleware applied
     if (!res.locals.user) {       // Check for authenticated user HERE!
@@ -81,32 +47,30 @@ router.get('/student-dashboard', authMiddleware, (req, res) => { // Middleware a
   });
   
 
-router.post('/joinLecture', authMiddleware, async (req, res) => { // Make the handler async
-    const joinTimeFromClient = req.body.joinTime;
+  router.post('/joinLecture', authMiddleware, async (req, res) => { // Make the handler async
+    const { course, joinTime } = req.body; // Get course and joinTime from the request body
 
-    // 1. Validate:
-    if (!joinTimeFromClient) {
+    // Validate
+    if (!joinTime) {
         return res.status(400).json({ error: "Invalid Join Time" });
     }
 
-    // 2. Store in Database (using Mongoose)
+    // Store in Database
     try {
-        const userId = req.user.id; // Corrected: Get userId from req.user
-        const attendance = new LectureAttendance({ userId: userId, joinTime: joinTimeFromClient }); // Use your model
+        const userId = req.user.id; // Get userId from req.user
+        const attendance = new LectureAttendance({ userId: userId, joinTime: new Date(joinTime), course: course }); // Use your model
         await attendance.save(); // Save to MongoDB
 
-        // 3. Respond to the client
-        res.status(200).json({ message: 'Join successful', joinTime: joinTimeFromClient });
+        // Respond to the client
+        res.status(200).json({ message: 'Join successful', joinTime: joinTime });
     } catch (error) {
         console.error("Database Error:", error);
         res.status(500).json({ error: 'Database error' });  // Send error to client
     }
-
 });
 
-// dashboardRoutes.js
+// Other routes...
 router.post('/selectCourse1', authMiddleware, dashboardController.selectCourse1);
 router.post('/selectCourse2', authMiddleware, dashboardController.selectCourse2);
-
-
+router.post('/selectCourse', authMiddleware, dashboardController.selectCourse);
 module.exports = router;
