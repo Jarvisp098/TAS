@@ -44,24 +44,21 @@
 
     <div id="content">
         <div id="dashboard" class="section">
-            <!-- Add your dashboard content here -->
             <h2>Admin Dashboard</h2>
             <p>Welcome to the admin panel!</p>
         </div>
         <h2>Dashboard Overview</h2>
 
         <div id="totalStudentsCard">
-            <h3>Total Students: <span id="totalStudents">0</span></h3>
+            <h3>Total Students Enrolled: <span id="totalStudents">0</span></h3>
         </div>
-    <div class="card">
-        <h3>Attendance Percentage: <span id="attendancePercentage">0%</span></h3>
-    </div>
-    <button id="javaButton">Java</button>
-    <button id="pythonButton">Python</button>
-    <div id="courseCounts">
-        <h3>Java Enrolled Students: <span id="javaCount">0</span></h3>
-        <h3>Python Enrolled Students: <span id="pythonCount">0</span></h3>
-    </div>
+        
+        <div class="card">
+            <h3>Attendance Percentage: <span id="attendancePercentage">0%</span></h3>
+        </div>
+        
+        <button id="javaButton">Java</button>
+        <button id="pythonButton">Python</button>
     </div>
 
     <div id="report" class="section">
@@ -73,32 +70,35 @@
     <script>
         // Fetch total student count and attendance percentage
         $(document).ready(function() {
-        $.get('/api/getStudentCount', function(data) {
-            $('#totalStudents').text(data.totalStudents);
-        }).fail(function() {
-            console.error('Error fetching total student count');
-        });
+            $.get('/api/getStudentCount', function(data) {
+                $('#totalStudents').text(data.totalStudents);
+            }).fail(function() {
+                console.error('Error fetching total student count');
+            });
 
+            // Fetch attendance percentage
+            $.get('/api/getAttendancePercentage', function(data) {
+                $('#attendancePercentage').text(data.percentage + '%');
+            });
 
-        // Fetch attendance percentage
-        $.get('/api/getAttendancePercentage', function(data) {
-            $('#attendancePercentage').text(data.percentage + '%');
-        });
+            // Fetch Java enrolled students
+            $('#javaButton').click(function() {
+                $.get('/api/getJavaEnrolledCount', function(data) {
+                    $('#totalStudents').text(data.javaCount); // Update totalStudents card with Java count
+                }).fail(function() {
+                    console.error('Error fetching Java enrolled count');
+                });
+            });
 
-        // Fetch Java enrolled students
-        $('#javaButton').click(function() {
-            $.get('/api/getJavaEnrolledCount', function(data) {
-                $('#javaCount').text(data.javaCount);
+            // Fetch Python enrolled students
+            $('#pythonButton').click(function() {
+                $.get('/api/getPythonEnrolledCount', function(data) {
+                    $('#totalStudents').text(data.pythonCount); // Update totalStudents card with Python count
+                }).fail(function() {
+                    console.error('Error fetching Python enrolled count');
+                });
             });
         });
-
-        // Fetch Python enrolled students
-        $('#pythonButton').click(function() {
-            $.get('/api/getPythonEnrolledCount', function(data) {
-                $('#pythonCount').text(data.pythonCount);
-            });
-        });
-    });
 
         // Function to show the report
         function showReport() {
@@ -164,45 +164,45 @@
                     console.error('Error fetching total student count:', error);
                 });
         };
-            // Handle report generation form submission
-            document.getElementById('reportForm').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission
-                
-                const fromDate = document.getElementById('fromDate').value;
-                const toDate = document.getElementById('toDate').value;
-        
-                // AJAX request to fetch the report data
-                fetch(`/api/generateReport?fromDate=${fromDate}&toDate=${toDate}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Display the report data
-                        document.getElementById('reportSection').style.display = 'block';
-                        const reportDataDiv = document.getElementById('reportData');
-                        reportDataDiv.innerHTML = ''; // Clear previous data
-        
-                        // Check if data is available
-                        if (data.length === 0) {
-                            reportDataDiv.innerHTML = '<p>No attendance records found for this date range.</p>';
-                        } else {
-                            // Display attendance records
-                            data.forEach(record => {
-                                reportDataDiv.innerHTML += `
-                                    <p>${record.userId.name} (${record.userId.email}) joined on ${new Date(record.joinTime).toLocaleString()}</p>
-                                `;
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching report data:', error);
-                        alert('Error fetching report data. Please try again later.');
-                    });
-            });
-        
+
+        // Handle report generation form submission
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+    
+            // AJAX request to fetch the report data
+            fetch(`/api/generateReport?fromDate=${fromDate}&toDate=${toDate}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Display the report data
+                    document.getElementById('reportSection').style.display = 'block';
+                    const reportDataDiv = document.getElementById('reportData');
+                    reportDataDiv.innerHTML = ''; // Clear previous data
+    
+                    // Check if data is available
+                    if (data.length === 0) {
+                        reportDataDiv.innerHTML = '<p>No attendance records found for this date range.</p>';
+                    } else {
+                        // Display attendance records
+                        data.forEach(record => {
+                            reportDataDiv.innerHTML += `
+                                <p>${record.userId.name} (${record.userId.email}) joined on ${new Date(record.joinTime).toLocaleString()}</p>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching report data:', error);
+                    alert('Error fetching report data. Please try again later.');
+                });
+        });
     </script>
 </body>
 </html>

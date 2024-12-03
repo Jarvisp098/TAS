@@ -3,15 +3,26 @@
 const express = require('express');
 const router = express.Router();
 // Import your MongoDB connection/model
-const Student = require('../models/studentRecord'); // Replace with your student model path
+const StudentRecord = require('../models/studentRecord'); // Replace with your student model path
 
-router.get('/getStudentCount', async (req, res) => {
+// In your studentCount.js or similar route file
+router.get('/getJavaEnrolledCount', async (req, res) => {
   try {
-    const totalStudents = await Student.countDocuments(); // Count all documents in the collection
-    res.json({ totalStudents });
+      const javaCount = await StudentRecord.countDocuments({ selectedCourses: 'Java' });
+      res.json({ javaCount });
   } catch (error) {
-    console.error('Error fetching student count:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      console.error('Error fetching Java enrolled count:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/getPythonEnrolledCount', async (req, res) => {
+  try {
+      const pythonCount = await StudentRecord.countDocuments({ selectedCourses: 'Python' });
+      res.json({ pythonCount });
+  } catch (error) {
+      console.error('Error fetching Python enrolled count:', error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 });
 
