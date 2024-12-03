@@ -3,30 +3,6 @@ const User = require('../models/attendanceManager.js'); // Import your User mode
 const StudentRecord = require('../models/studentRecord');
 const LectureAttendance = require('../models/lectureAttendance'); // Import the LectureAttendance model
 
-exports.selectCourse1 = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        user.selectedCourse1 = 'Maths'; // Update the user's selected course
-        await user.save();
-        res.redirect('/student-dashboard'); // Or send a JSON response if using AJAX
-    } catch (error) {
-        // Handle error
-    }
-};
-
-// dashboardController.js
-exports.selectCourse2 = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        user.selectedCourse2 = 'Biology';  // Or whatever course name
-        await user.save();
-        res.redirect('/student-dashboard'); // Or a suitable redirect
-    } catch (error) {
-        // Handle the error
-        console.error(error)
-        res.status(500).send('Internal Server Error') // Or a proper error response
-    }
-};
 
 exports.markJavaAttendance = async (req, res) => {
     try {
@@ -53,23 +29,32 @@ exports.selectCourse = async (req, res) => {
         const userId = req.user.id; // Get the user ID from the request
         const { course } = req.body; // Get the selected course from the request body
 
+        // Log the received course selection and user ID
+        console.log('Received course selection:', course);
+        console.log('User  ID from request:', userId);
+
         // Find the user and update the selected course
         const user = await StudentRecord.findById(userId);
         if (!user) {
+            console.log('User  not found:', userId);
             return res.status(404).send('User  not found');
         }
 
+        // Log the user object before updating
+        console.log('User  found:', user);
+
         // Store the selected course in the appropriate field
         if (course === 'Java') {
-            user.selectedCourse1 = 'Java'; // Adjust the field name as necessary
+            user.selectedCourses.push('Java'); // Adjust the field name as necessary
         } else if (course === 'Python') {
-            user.selectedCourse2 = 'Python'; // Adjust the field name as necessary
+            user.selectedCourses.push('Python'); // Adjust the field name as necessary
         }
 
         await user.save(); // Save the changes to the database
+        console.log('Updated user selected courses:', user.selectedCourses); // Log updated courses
         res.status(200).send('Course selected successfully');
     } catch (error) {
-        console.error(error);
+        console.error('Error in selectCourse:', error); // Log any errors
         res.status(500).send('Internal Server Error');
     }
 };

@@ -63,7 +63,7 @@ router.get('/logout', authController.logout);
 // Student Registration Route
 router.post('/register-student', async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, course } = req.body;
+        const { name, email, password, confirmPassword, selectedCourses } = req.body; // Change 'course' to 'selectedCourses'
 
         if (password !== confirmPassword) {
             return res.status(400).send('Passwords do not match!');
@@ -80,7 +80,7 @@ router.post('/register-student', async (req, res) => {
             email,
             password: hashedPassword,
             role: 'student', // Explicitly set the role
-            course: course    // Store selected course
+            selectedCourses: selectedCourses // Store selected courses
         });
 
         await newStudent.save();

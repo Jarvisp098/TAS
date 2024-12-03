@@ -1,25 +1,51 @@
-<!-- report.ejs -->
-<h1>Attendance Report</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Total Attendance</th>
-            <th>Attendance Times</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% reportData.forEach(studentData => { %>
-            <tr>
-                <td><%= studentData.student %></td>
-                <td><%= studentData.totalAttendance %></td>
-                <td>
-                    <% studentData.attendances.forEach(attendance => { %>
-                        <p><%= attendance %></p>
-                    <% }); %>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
-</table>
+<!-- reportGeneration.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Attendance Report</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Link to your CSS -->
+</head>
+<body>
+    <header>
+        <h1>Generate Attendance Report</h1>
+    </header>
 
+    <div id="content">
+        <h2>Select Date Range</h2>
+        <form id="reportForm">
+            <label for="fromDate">From Date:</label>
+            <input type="date" id="fromDate" required>
+            
+            <label for="toDate">To Date:</label>
+            <input type="date" id="toDate" required>
+            
+            <button type="submit">Generate Report</button>
+        </form>
+
+        <div id="reportSection" style="display: none;">
+            <h2>Attendance Report</h2>
+            <div id="reportData"></div>
+        </div>
+    </div>
+
+    <script>
+        // Handle report generation form submission
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            // Here you can add AJAX logic to fetch the report data
+            // For now, we'll just display a message
+            document.getElementById('reportSection').style.display = 'block';
+            document.getElementById('reportData').innerHTML = `
+                <p>Generating report from <strong>${fromDate}</strong> to <strong>${toDate}</strong>.</p>
+                <p>Report data will be displayed here...</p>
+            `;
+        });
+    </script>
+</body>
+</html>

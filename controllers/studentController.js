@@ -15,15 +15,22 @@ exports.getHome = async (req, res) =>{
 }
 
 exports.addStudent = async (req, res) => {
-    try{
-        const student = new StudentRecord({ name: req.body.name, email: req.body.email});
+    try {
+        const student = new StudentRecord({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            role: 'student',
+            selectedCourses: req.body.selectedCourses // Ensure selectedCourses is included
+        });
         await student.save();
         res.redirect('/home');
-    }catch(error){
-       console.log('Error Adding Student');
-       res.status(500).send('Internal Server Error');
+    } catch (error) {
+        console.log('Error Adding Student', error);
+        res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 exports.deleteStudent = async (req, res) => {
@@ -68,5 +75,23 @@ exports.updateStudent = async (req, res) =>{
        console.log('Error updating student records.');
        res.status(500).send('Internal Server Error');
     }
+};
+exports.updateAttendance = async (req, res) => {
+    try {
+        const { attendanceDate } = req.body;
+        const length = req.body.attendance ? req.body.attendance.length : 0;
 
+        for (let i = 0; i < length; i++) {
+            const studentID = req.body.attendance[i];
+            await LectureAttendance.create({
+                userId: studentID,
+                joinTime: new Date(),
+                course: req.body.course // Ensure course is included
+            });
+        }
+        res.redirect('/home');
+    } catch (error) {
+        console.log('Error updating attendance records.', error);
+        res.status(500).send('Internal Server Error');
+    }
 };

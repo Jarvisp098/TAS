@@ -38,31 +38,29 @@
 <body>
 
   <div id="registerContainer">
-    <form action="/register-student" method="post"> <div>
-      <label for="name">Name:</label><br>
-      <input type="text" id="name" name="name" required><br><br>
-
-      <label for="email">Email:</label><br>
-      <input type="email" id="email" name="email" required><br><br>
-
-
-      <label for="course">Course:</label><br>
-      <select id="course" name="course" required>
-          <option value="Java">Java</option>
-          <option value="Python">Python</option>
-          <option value="Both">Both</option>
-      </select><br><br>
-
-
-
-      <label for="password">Password:</label><br>
-      <input type="password" id="password" name="password" required><br><br>
-
-      <label for="confirmPassword">Confirm Password:</label><br>
-      <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
-
-      <input type="submit" value="Register">
-    </form>
+    <form action="/register-student" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" name="name" required>
+  
+      <label for="email">Email:</label>
+      <input type="email" name="email" required>
+  
+      <label for="password">Password:</label>
+      <input type="password" name="password" required>
+  
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" name="confirmPassword" required>
+  
+      <label for="course">Select Courses:</label>
+      <label>
+          <input type="checkbox" name="selectedCourses" value="Java"> Java
+      </label>
+      <label>
+          <input type="checkbox" name="selectedCourses" value="Python"> Python
+      </label>
+  
+      <button type="submit">Register</button>
+  </form>
   </div>
 
 </body>

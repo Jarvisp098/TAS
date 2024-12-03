@@ -12,6 +12,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const studentCountRoutes = require('./routes/studentCount');
 const LectureAttendance = require('./models/lectureAttendance'); // Use LectureAttendance instead
 const StudentRecord = require('./models/studentRecord');
+const reportRoutes = require('./routes/reportRoutes');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3000;
 const moment = require('moment');
@@ -46,6 +47,7 @@ app.use('/', authRoutes);
 app.use('/', studentRoutes);
 app.use('/', dashboardRoutes);
 app.use('/api', studentCountRoutes);
+app.use('/api', reportRoutes);
 
 
 app.use((err, req, res, next) =>{
@@ -54,24 +56,68 @@ app.use((err, req, res, next) =>{
     next();
 });
 
+// Get total student count
 app.get('/api/getStudentCount', async (req, res) => {
-    try {
+  try {
       const totalStudents = await StudentRecord.countDocuments({});
       res.json({ totalStudents });
-    } catch (error) {
+  } catch (error) {
       console.error('Error fetching student count:', error);
       res.status(500).json({ error: 'Failed to fetch student count' });
+  }
+});
+
+// Get Java enrolled students count
+app.get('/api/getJavaEnrolledCount', async (req, res) => {
+  try {
+      const javaCount = await StudentRecord.countDocuments({ selectedCourse1: 'Java' });
+      const bothCount = await StudentRecord.countDocuments({ selectedCourse2: 'Java' });
+      res.json({ javaCount: javaCount + bothCount });
+  } catch (error) {
+      console.error('Error fetching Java enrolled count:', error);
+      res.status(500).json({ error: 'Failed to fetch Java count' });
+  }
+});
+
+// Get Python enrolled students count
+app.get('/api/getPythonEnrolledCount', async (req, res) => {
+  try {
+      const pythonCount = await StudentRecord.countDocuments({ selectedCourse1: 'Python' });
+      const bothCount = await StudentRecord.countDocuments({ selectedCourse2: 'Python' });
+      res.json({ pythonCount: pythonCount + bothCount });
+  } catch (error) {
+      console.error('Error fetching Python enrolled count:', error);
+      res.status(500).json({ error: 'Failed to fetch Python count' });
+  }
+});
+
+// Get attendance percentage
+app.get('/api/getAttendancePercentage', async (req, res) => {
+  try {
+      const totalStudents = await StudentRecord.countDocuments();
+      const attendedStudents = await StudentRecord.countDocuments({ attended: true });
+      const percentage = totalStudents > 0 ? ((attendedStudents / totalStudents) * 100).toFixed(2) : 0;
+      res.json({ percentage });
+  } catch (error) {
+      console.error('Error fetching attendance percentage:', error);
+      res.status(500).json({ error: 'Failed to fetch attendance percentage' });
+  }
+});
+  
+  
+app.post('/joinLecture', async (req, res) => {
+    const { joinTime, subject, studentEmail, lectureId } = req.body; // Make sure to include lectureId
+
+    // Check if lectureId is provided
+    if (!lectureId) {
+        return res.status(400).json({ message: 'Lecture ID is required' });
     }
-  });
-  
-  
-  app.post('/joinLecture', async (req, res) => {
-    const { joinTime, subject, studentName, studentEmail } = req.body;
-    
+
     const attendanceRecord = {
-        studentId: studentEmail, // Assuming you will store email or student ID
+        userId: studentEmail, // Assuming you will store email or student ID
         joinTime: joinTime,
-        course: subject // Change 'subject' to 'course' if needed
+        course: subject, // Use 'subject' as 'course'
+        lectureId: lectureId // Include lectureId here
     };
 
     try {
@@ -79,7 +125,7 @@ app.get('/api/getStudentCount', async (req, res) => {
         await newAttendance.save();
         res.json({ message: 'Join successful', joinTime: joinTime });
     } catch (error) {
-        res.status(500).json({ message: 'Error joining lecture' });
+        res.status(500).json({ message: 'Error joining lecture', error: error.message });
     }
 });
 

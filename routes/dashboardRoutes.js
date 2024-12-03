@@ -70,7 +70,6 @@ router.get('/student-dashboard', authMiddleware, (req, res) => { // Middleware a
 });
 
 // Other routes...
-router.post('/selectCourse1', authMiddleware, dashboardController.selectCourse1);
-router.post('/selectCourse2', authMiddleware, dashboardController.selectCourse2);
 router.post('/selectCourse', authMiddleware, dashboardController.selectCourse);
+router.post('/joinLecture', authMiddleware, dashboardController.joinLecture);
 module.exports = router;
