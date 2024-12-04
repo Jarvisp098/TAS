@@ -22,7 +22,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" onclick="showSection('report')">
+                <a href="#" onclick="loadReport()">
                     <i class="fas fa-file-alt"></i> <span>Report</span>
                 </a>
             </li>
@@ -61,24 +61,9 @@
         <button id="pythonButton">Python</button>
     </div>
 
-    <div id="report" class="section">
-        <div id="reportContainer">
-            <!-- Report content will be dynamically loaded here -->
-        </div>
-    </div>
-
     <script>
         // Fetch total student count
         $(document).ready(function() {
-            $.get('/api/getStudentCount', function(data) {
-                $('#totalStudents').text(data.totalStudents);
-            }).fail(function() {
-                console.error('Error fetching total student count');
-            });
-
-            // Fetch initial attendance percentage
-            fetchAttendancePercentage(); // Call this function to fetch initial data
-
             // Fetch Java enrolled students
             $('#javaButton').click(function() {
                 $.get('/api/getJavaEnrolledCount', function(data) {
@@ -112,54 +97,66 @@
             });
         }
 
-        // Function to show the report
-        function showReport() {
-            const reportContainer = document.getElementBy
-            .getElementById('reportContainer');
-            fetch('/generateReport')
-            .then(response => response.text())
-            .then(reportHtml => {
-                reportContainer.innerHTML = reportHtml;
-            })
-            .catch(error => {
-                reportContainer.innerHTML = '<p>Error loading report.</p>';
-                console.error('Error fetching report:', error);
-            });
+        function loadReport() {
+            fetch('/api/report') // Ensure this endpoint is correct
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Clear the current content
+                    const contentArea = document.getElementById('content');
+                    contentArea.innerHTML = '';
+            
+                    // Create a table to display the report
+                    let reportTable = '<table class="report-table"><caption>Attendance Report</caption><thead><tr><th>Index</th><th>Date</th><th>Student Name</th><th>Email Address</th><th>Course Enrolled</th><th>Lecture Join Time</th><th>Lecture Leave Time</th><th>Attendance Status</th></tr></thead><tbody>';
+            
+                    data.forEach(record => {
+                        reportTable += `<tr>
+                            <td>${record.index}</td>
+                            <td>${new Date(record.date).toDateString()}</td>
+                            <td>${record.studentName}</td>
+                            <td>${record.emailAddress}</td>
+                            <td>${record.courseEnrolled}</td>
+                            <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleString() : 'N/A'}</td>
+                            <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleString() : 'N/A'}</td>
+                            <td>${record.attendanceStatus}</td>
+                        </tr>`;
+                    });
+            
+                    reportTable += '</tbody></table>';
+            
+                    // Append the report table to the content area
+                    contentArea.innerHTML = reportTable;
+                })
+                .catch(error => {
+                    console.error('Error fetching report:', error);
+                    document.getElementById('content').innerHTML = '<p>Error loading report. Please try again later.</p>';
+                });
         }
 
-        // Function to show the active section
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for hovering the sidebar hover area
+            const sidebar = document.querySelector('.main-menu');
+            const hoverArea = document.querySelector('.sidebar-hover-area');
+            
+            hoverArea.addEventListener('mouseenter', () => {
+                sidebar.classList.remove('collapsed');
             });
-
-            const activeSection = document.getElementById(sectionId);
-            if (activeSection) {
-                activeSection.classList.add('active');
-                activeSection.style.display = 'block';
-            }
-        }
-
-        // Add event listener for hovering the sidebar hover area
-        const sidebar = document.querySelector('.main-menu');
-        const hoverArea = document.querySelector('.sidebar-hover-area');
         
-        hoverArea.addEventListener('mouseenter', () => {
-            sidebar.classList.remove('collapsed');
-        });
-
-        sidebar.addEventListener('mouseenter', () => {
-            sidebar.classList.remove('collapsed');
-        });
-
-        hoverArea.addEventListener('mouseleave', () => {
-            sidebar.classList.add('collapsed');
-        });
-
-        sidebar.addEventListener('mouseleave', () => {
-            sidebar.classList.add('collapsed');
+            sidebar.addEventListener('mouseenter', () => {
+                sidebar.classList.remove('collapsed');
+            });
+        
+            hoverArea.addEventListener('mouseleave', () => {
+                sidebar.classList.add('collapsed');
+            });
+        
+            sidebar.addEventListener('mouseleave', () => {
+                sidebar.classList.add('collapsed');
+            });
         });
 
         window.onload = function() {
@@ -177,45 +174,6 @@
                     console.error('Error fetching total student count:', error);
                 });
         };
-
-        // Handle report generation form submission
-        document.getElementById('reportForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-    
-            // AJAX request to fetch the report data
-            fetch(`/api/generateReport?fromDate=${fromDate}&toDate=${toDate}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Display the report data
-                    document.getElementById('reportSection').style.display = 'block';
-                    const reportDataDiv = document.getElementById('reportData');
-                    reportDataDiv.innerHTML = ''; // Clear previous data
-    
-                    // Check if data is available
-                    if (data.length === 0) {
-                        reportDataDiv.innerHTML = '<p>No attendance records found for this date range.</p>';
-                    } else {
-                        // Display attendance records
-                        data.forEach(record => {
-                            reportDataDiv.innerHTML += `
-                                <p>${record.userId.name} (${record.userId.email}) joined on ${new Date(record.joinTime).toLocaleString()}</p>
-                            `;
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching report data:', error);
-                    alert('Error fetching report data. Please try again later.');
-                });
-        });
     </script>
 </body>
 </html>

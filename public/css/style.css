@@ -161,3 +161,38 @@ header {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
 }
+
+/* Report Table Styles */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.9em;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.report-table thead {
+  background-color: #343a40; /* Dark background for header */
+  color: #fff; /* White text for header */
+}
+
+.report-table th, .report-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd; /* Light border for rows */
+}
+
+.report-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Light background for even rows */
+}
+
+
+.report-table caption {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1f2937; /* Dark text for caption */
+}

@@ -1,28 +1,73 @@
-// routes/reportRoutes.js
 const express = require('express');
 const router = express.Router();
-const LectureAttendance = require('../models/lectureAttendance'); // Adjust the path as needed
+const StudentRecord = require('../models/studentRecord');
+const LectureAttendance = require('../models/lectureAttendance');
 
-// Endpoint to generate report based on date range
-router.get('/generateReport', async (req, res) => {
-    const { fromDate, toDate } = req.query;
+// Route to fetch report data
+// router.get('/report', async (req, res) => {
+//     try {
+//         // Fetch all students and their attendance records
+//         const students = await StudentRecord.find().populate('attendance', 'date status course');
 
+//         // Prepare the report data
+//         const reportData = students.map((student) => {
+//             const lectureAttendances = student.attendance;
+//             return lectureAttendances.map((attendance, index) => ({
+//                 index: index + 1,
+//                 date: attendance.date,
+//                 studentName: student.name,
+//                 emailAddress: student.email,
+//                 courseEnrolled: attendance.course,
+//                 lectureJoinTime: attendance.joinTime,
+//                 lectureLeaveTime: attendance.leaveTime,
+//                 attendanceStatus: attendance.status,
+//             }));
+//         });
+
+//         // Flatten the report data
+//         const flattenedReportData = [].concat(...reportData);
+
+//         // Send the report data as JSON
+//         res.json(flattenedReportData);
+//     } catch (error) {
+//         console.error('Error generating report:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
+
+router.get('/report', async (req, res) => {
     try {
-        // Convert the dates to Date objects
-        const start = new Date(fromDate);
-        const end = new Date(toDate);
-        end.setHours(23, 59, 59, 999); // Set end date to the end of the day
+        const attendances = await LectureAttendance.find()
+            .populate('userId', 'name email') // Populate userId to get student details
+            .exec();
 
-        // Query the database for attendance records within the date range
-        const attendanceRecords = await LectureAttendance.find({
-            joinTime: { $gte: start, $lte: end }
-        }).populate('userId', 'name email'); // Populate user details
+        const reportData = attendances.map(attendance => {
+            if (attendance.userId) { // Check if userId is not null
+                return {
+                    studentName: attendance.userId.name,
+                    emailAddress: attendance.userId.email,
+                    courseEnrolled: attendance.course,
+                    lectureJoinTime: attendance.joinTime,
+                    lectureLeaveTime: attendance.leaveTime,
+                    attendanceStatus: attendance.status,
+                };
+            } else {
+                // Handle the case where userId is null
+                return {
+                    studentName: 'Unknown', // or any default value
+                    emailAddress: 'N/A',
+                    courseEnrolled: attendance.course,
+                    lectureJoinTime: attendance.joinTime,
+                    lectureLeaveTime: attendance.leaveTime,
+                    attendanceStatus: attendance.status,
+                };
+            }
+        });
 
-        // Send the attendance records as the response
-        res.json(attendanceRecords);
+        res.json(reportData); // Ensure this returns JSON
     } catch (error) {
         console.error('Error generating report:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).send('Internal Server Error');
     }
 });
 

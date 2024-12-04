@@ -1,51 +1,36 @@
-<!-- reportGeneration.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Attendance Report</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- Link to your CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Attendance Report</title>
 </head>
 <body>
-    <header>
-        <h1>Generate Attendance Report</h1>
-    </header>
-
-    <div id="content">
-        <h2>Select Date Range</h2>
-        <form id="reportForm">
-            <label for="fromDate">From Date:</label>
-            <input type="date" id="fromDate" required>
-            
-            <label for="toDate">To Date:</label>
-            <input type="date" id="toDate" required>
-            
-            <button type="submit">Generate Report</button>
-        </form>
-
-        <div id="reportSection" style="display: none;">
-            <h2>Attendance Report</h2>
-            <div id="reportData"></div>
-        </div>
-    </div>
-
-    <script>
-        // Handle report generation form submission
-        document.getElementById('reportForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-
-            // Here you can add AJAX logic to fetch the report data
-            // For now, we'll just display a message
-            document.getElementById('reportSection').style.display = 'block';
-            document.getElementById('reportData').innerHTML = `
-                <p>Generating report from <strong>${fromDate}</strong> to <strong>${toDate}</strong>.</p>
-                <p>Report data will be displayed here...</p>
-            `;
-        });
-    </script>
+    <h1>Attendance Report</h1>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Email Address</th>
+                <th>Course Enrolled</th>
+                <th>Lecture Join Time</th>
+                <th>Lecture Leave Time</th>
+                <th>Attendance Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% reportData.forEach(record => { %>
+                <tr>
+                    <td><%= record.studentName %></td>
+                    <td><%= record.emailAddress %></td>
+                    <td><%= record.courseEnrolled %></td>
+                    <td><%= record.lectureJoinTime ? record.lectureJoinTime.toLocaleString() : 'N/A' %></td>
+                    <td><%= record.lectureLeaveTime ? record.lectureLeaveTime.toLocaleString() : 'N/A' %></td>
+                    <td><%= record.attendanceStatus %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 </body>
 </html>
