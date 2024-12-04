@@ -113,18 +113,18 @@
                     // Create a table to display the report
                     let reportTable = '<table class="report-table"><caption>Attendance Report</caption><thead><tr><th>Index</th><th>Date</th><th>Student Name</th><th>Email Address</th><th>Course Enrolled</th><th>Lecture Join Time</th><th>Lecture Leave Time</th><th>Attendance Status</th></tr></thead><tbody>';
             
-                    data.forEach(record => {
-                        reportTable += `<tr>
-                            <td>${record.index}</td>
-                            <td>${new Date(record.date).toDateString()}</td>
-                            <td>${record.studentName}</td>
-                            <td>${record.emailAddress}</td>
-                            <td>${record.courseEnrolled}</td>
-                            <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleString() : 'N/A'}</td>
-                            <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleString() : 'N/A'}</td>
-                            <td>${record.attendanceStatus}</td>
-                        </tr>`;
-                    });
+                        data.forEach(record => {
+                            reportTable += `<tr>
+                                <td>${record.index}</td>
+                                <td>${new Date(record.date).toLocaleDateString()}</td> <!-- Format date -->
+                                <td>${record.studentName}</td>
+                                <td>${record.emailAddress}</td>
+                                <td>${record.courseEnrolled}</td>
+                                <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
+                                <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
+                                <td>${record.attendanceStatus}</td>
+                            </tr>`;
+                        });
             
                     reportTable += '</tbody></table>';
             
