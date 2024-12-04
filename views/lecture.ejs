@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= course %> Lecture</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header>
+        <h1><%= course %> Lecture</h1>
+        <button id="logout">Logout</button>
+    </header>
+    <div id="content">
+        <p>You have joined the <%= course %> lecture.</p>
+        <button id="leaveLectureButton">Leave Lecture</button>
+    </div>
+
+    <script>
+        const course = '<%= course %>';
+
+        // Function to leave the lecture
+        document.getElementById('leaveLectureButton').onclick = async function() {
+            const leaveTime = new Date().toISOString(); // Capture the leave time
+            const response = await fetch('/leaveLecture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ course, leaveTime })
+            });
+
+            if (response.ok) {
+                alert('You have left the lecture successfully.');
+                window.location.href = '/student-dashboard'; // Redirect back to the dashboard
+            } else {
+                alert('Error leaving lecture');
+            }
+        };
+    </script>
+</body>
+</html>

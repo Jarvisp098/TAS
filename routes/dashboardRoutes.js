@@ -42,7 +42,7 @@ router.get('/student-dashboard', authMiddleware, (req, res) => { // Middleware a
         return res.redirect('/admin-dashboard');
       }
   
-      res.render('student-dashboard', {user: res.locals.user}); // Render student dashboard
+      res.render('student-dashboard', {user: res.locals.user, course: null}); // Render student dashboard
   
   });
   
@@ -69,7 +69,17 @@ router.get('/student-dashboard', authMiddleware, (req, res) => { // Middleware a
     }
 });
 
+router.get('/lecture/:course', authMiddleware, (req, res) => {
+  const { course } = req.params;
+  res.render('lecture', { course }); // Pass the course to the lecture page
+});
+
+
 // Other routes...
 router.post('/selectCourse', authMiddleware, dashboardController.selectCourse);
 router.post('/joinLecture', authMiddleware, dashboardController.joinLecture);
+router.post('/leaveLecture', authMiddleware, dashboardController.leaveLecture);
+
+
+
 module.exports = router;

@@ -68,7 +68,7 @@
     </div>
 
     <script>
-        // Fetch total student count and attendance percentage
+        // Fetch total student count
         $(document).ready(function() {
             $.get('/api/getStudentCount', function(data) {
                 $('#totalStudents').text(data.totalStudents);
@@ -76,15 +76,14 @@
                 console.error('Error fetching total student count');
             });
 
-            // Fetch attendance percentage
-            $.get('/api/getAttendancePercentage', function(data) {
-                $('#attendancePercentage').text(data.percentage + '%');
-            });
+            // Fetch initial attendance percentage
+            fetchAttendancePercentage(); // Call this function to fetch initial data
 
             // Fetch Java enrolled students
             $('#javaButton').click(function() {
                 $.get('/api/getJavaEnrolledCount', function(data) {
                     $('#totalStudents').text(data.javaCount); // Update totalStudents card with Java count
+                    fetchAttendancePercentage('Java'); // Fetch attendance percentage for Java
                 }).fail(function() {
                     console.error('Error fetching Java enrolled count');
                 });
@@ -94,15 +93,29 @@
             $('#pythonButton').click(function() {
                 $.get('/api/getPythonEnrolledCount', function(data) {
                     $('#totalStudents').text(data.pythonCount); // Update totalStudents card with Python count
+                    fetchAttendancePercentage('Python'); // Fetch attendance percentage for Python
                 }).fail(function() {
                     console.error('Error fetching Python enrolled count');
                 });
             });
         });
 
+        // Function to fetch attendance percentage
+        function fetchAttendancePercentage(course) {
+            $.get('/api/getAttendancePercentage', function(data) {
+                $('#attendancePercentage').text(data.javaPercentage + '%'); // Default to Java
+                if (course === 'Python') {
+                    $('#attendancePercentage').text(data.pythonPercentage + '%'); // Update to Python if specified
+                }
+            }).fail(function() {
+                console.error('Error fetching attendance percentages');
+            });
+        }
+
         // Function to show the report
         function showReport() {
-            const reportContainer = document.getElementById('reportContainer');
+            const reportContainer = document.getElementBy
+            .getElementById('reportContainer');
             fetch('/generateReport')
             .then(response => response.text())
             .then(reportHtml => {

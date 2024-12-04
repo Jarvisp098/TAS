@@ -93,15 +93,27 @@ app.get('/api/getPythonEnrolledCount', async (req, res) => {
 
 // Get attendance percentage
 app.get('/api/getAttendancePercentage', async (req, res) => {
-  try {
-      const totalStudents = await StudentRecord.countDocuments();
-      const attendedStudents = await StudentRecord.countDocuments({ attended: true });
-      const percentage = totalStudents > 0 ? ((attendedStudents / totalStudents) * 100).toFixed(2) : 0;
-      res.json({ percentage });
-  } catch (error) {
-      console.error('Error fetching attendance percentage:', error);
-      res.status(500).json({ error: 'Failed to fetch attendance percentage' });
-  }
+    try {
+        // Total number of students for Java
+        const totalJavaStudents = await StudentRecord.countDocuments({ selectedCourses: 'Java' });
+        // Total number of students for Python
+        const totalPythonStudents = await StudentRecord.countDocuments({ selectedCourses: 'Python' });
+
+        // Total number of students who attended Java lectures
+        const attendedJavaStudents = await LectureAttendance.countDocuments({ course: 'Java', status: 'attended' });
+        // Total number of students who attended Python lectures
+        const attendedPythonStudents = await LectureAttendance.countDocuments({ course: 'Python', status: 'attended' });
+
+        // Calculate attendance percentage for Java
+        const javaPercentage = totalJavaStudents > 0 ? ((attendedJavaStudents / totalJavaStudents) * 100).toFixed(2) : 0;
+        // Calculate attendance percentage for Python
+        const pythonPercentage = totalPythonStudents > 0 ? ((attendedPythonStudents / totalPythonStudents) * 100).toFixed(2) : 0;
+        // Return the result
+        res.json({ javaPercentage, pythonPercentage });
+    } catch (error) {
+        console.error('Error fetching attendance percentage:', error);
+        res.status(500).json({ error: 'Failed to fetch attendance percentage' });
+    }
 });
   
   

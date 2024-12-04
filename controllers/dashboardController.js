@@ -60,20 +60,53 @@ exports.selectCourse = async (req, res) => {
 };
 
 exports.joinLecture = async (req, res) => {
-    try {
-        const { course, joinTime } = req.body; // Get data from the request body
-        const userId = req.user.id; // Get the user ID from the request
+    const { course, joinTime } = req.body; // Get course and joinTime from the request body
+    const userId = req.user.id; // Get the user ID from the request
 
-        // Create a new attendance record
+    console.log(`User  ID: ${userId} is attempting to join course: ${course} at ${joinTime}`); // Log user and course info
+
+    try {
+        // Ensure joinTime is a valid date
+        if (!joinTime || isNaN(new Date(joinTime))) {
+            return res.status(400).json({ error: "Invalid Join Time" });
+        }
+
         const attendanceRecord = new LectureAttendance({
             userId: userId,
-            joinTime: new Date(joinTime), // Convert joinTime to Date object
+            joinTime: new Date(joinTime), // Store the join time as a Date object
             course: course // Store the course name
         });
 
         await attendanceRecord.save(); // Save the attendance record
+        console.log(`Successfully joined lecture for course: ${course}`); // Log success
+        res.status(200).json({ message: 'Lecture joined successfully' }); // Respond with success
+    } catch (error) {
+        console.error("Error joining lecture:", error); // Log the error
+        res.status(500).send('Error joining lecture'); // Respond with an error
+    }
+};
 
-        res.status(200).send('Lecture joined successfully');
+exports.leaveLecture = async (req, res) => {
+    try {
+        const { course, leaveTime } = req.body; // Get course and leave time from the request body
+        const userId = req.user.id; // Get the user ID from the request
+
+        // Find the attendance record for the current lecture
+        const attendanceRecord = await LectureAttendance.findOne({
+            userId: userId,
+            course: course,
+            joinTime: { $exists: true } // Ensure there is a join time
+        }).sort({ joinTime: -1 }); // Get the most recent join record
+
+        if (!attendanceRecord) {
+            return res.status(404).send('No active lecture found to leave');
+        }
+
+        // Update the attendance record with the leave time
+        attendanceRecord.leaveTime = new Date(leaveTime); // Add leave time
+        await attendanceRecord.save(); // Save the changes
+
+        res.status(200).send('Lecture left successfully');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');

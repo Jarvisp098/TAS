@@ -6,6 +6,8 @@
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
 </head>
 <body>
     <header>
@@ -44,23 +46,62 @@
         <div id="joinLectureSection">
             <h2>Join Lecture</h2>
             <% if (user.selectedCourses.includes('Java')) { %>
-                <button class="course-button" onclick="selectCourse('Java', 'YOUR_JAVA_LECTURE_ID')">Join Java Lecture</button>
+                <button class="course-button" onclick="joinLecture('Java')">Join Java Lecture</button>
             <% } %>
             
             <% if (user.selectedCourses.includes('Python')) { %>
-                <button class="course-button" onclick="selectCourse('Python', 'YOUR_PYTHON_LECTURE_ID')">Join Python Lecture</button>
+                <button class="course-button" onclick="joinLecture('Python')">Join Python Lecture</button>
             <% } %>
         </div>
-        
     </div>
 
     <script>
+        // Add event listeners to course buttons
+        const courseButtons = document.querySelectorAll('.course-button');
+courseButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const courseName = button.textContent.trim(); // Get the course name without changing case
+        joinLecture(courseName); // Join the lecture
+    });
+});
+    
         // Function to join a lecture (for example, sending a timestamp)
-        function joinLecture() {
-            const timestamp = new Date().toISOString();
-            alert(`You have joined the lecture at ${timestamp}`);
+        let currentCourse = null;
+        async function joinLecture(course) {
+            const joinTime = new Date().toISOString(); // Get the current time in ISO format
+            console.log(`Attempting to join lecture for course: ${course} at ${joinTime}`); // Log the course and join time
+        
+            // Ensure course is either 'Java' or 'Python'
+            const validCourses = ['Java', 'Python'];
+            if (!validCourses.includes(course)) {
+                console.error(`Invalid course: ${course}`);
+                alert(`Invalid course selected: ${course}. Please select either Java or Python.`);
+                return;
+            }
+        
+            const response = await fetch('/joinLecture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ course, joinTime }) // Include joinTime in the request body
+            });
+        
+            console.log('Response status:', response.status); // Log the response status
+        
+            if (response.ok) {
+                // If the response is successful, redirect to the lecture page
+                const lecturePageUrl = `/lecture/${course}`;
+                alert(`Joined ${course} lecture successfully!`); // Show success message
+                window.location.href = lecturePageUrl; // Redirect to the lecture page
+            } else {
+                // Handle errors here
+                const errorMessage = await response.text(); // Get the error message from the response
+                console.log('Error message from server:', errorMessage); // Log the error message
+                alert(`Error joining lecture: ${errorMessage}`);
+            }
         }
-
+        
         // Function to show the active section
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.section');
@@ -68,65 +109,65 @@
                 section.classList.remove('active');
                 section.style.display = 'none';
             });
-
+    
             const activeSection = document.getElementById(sectionId);
             if (activeSection) {
                 activeSection.classList.add('active');
                 activeSection.style.display = 'block';
             }
         }
-
+    
         // Add event listener for hovering the sidebar hover area
         const sidebar = document.querySelector('.main-menu');
         const hoverArea = document.querySelector('.sidebar-hover-area');
-        
+    
         hoverArea.addEventListener('mouseenter', () => {
             sidebar.classList.remove('collapsed');
         });
-
+    
         sidebar.addEventListener('mouseenter', () => {
             sidebar.classList.remove('collapsed');
         });
-
+    
         hoverArea.addEventListener('mouseleave', () => {
             sidebar.classList.add('collapsed');
         });
-
+    
         sidebar.addEventListener('mouseleave', () => {
             sidebar.classList.add('collapsed');
         });
-
+    
         window.onload = function() {
             showSection('home');
         };
-
+    
         // Function to select a course
         // Function to select a course and join the lecture
-function selectCourse(courseName) {
-    const userName = '<%= user.name %>'; // Assuming user object is passed to the template
-    const userEmail = '<%= user.email %>'; // Assuming user object is passed to the template
-    const joinTime = new Date().toISOString(); // Get the current date and time
-
-    fetch('/joinLecture', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ course: courseName, name: userName, email: userEmail, joinTime: joinTime })
-    })
-    .then(response => {
-        if (response.ok) {
-            alert(`Successfully joined ${courseName} lecture!`);
-            // Optionally, refresh the page or update the UI to reflect the attendance
-        } else {
-            alert('Failed to join lecture.');
+        function selectCourse(courseName) {
+            const userName = '<%= user.name %>'; // Assuming user object is passed to the template
+            const userEmail = '<%= user.email %>'; // Assuming user object is passed to the template
+            const joinTime = new Date().toISOString(); // Get the current date and time
+    
+            fetch('/joinLecture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ course: courseName, name: userName, email: userEmail, joinTime: joinTime })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert(`Successfully joined ${courseName} lecture!`);
+                    // Optionally, refresh the page or update the UI to reflect the attendance
+                } else {
+                    alert('Failed to join lecture.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error joining lecture.');
+            });
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error joining lecture.');
-    });
-}
     </script>
 </body>
 </html>
