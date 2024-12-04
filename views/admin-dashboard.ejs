@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Additional styles for the home section */
+       
+
+        #home h1 {
+            font-size: 80px;
+            background-image: linear-gradient(-45deg,
+                                #ff1111,
+                                #ffe604,
+                                #6cff09,
+                                #03ffea,
+                                #ff12ff);
+            background-position: 0 0;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -16,6 +36,11 @@
     <!-- Sidebar -->
     <nav class="main-menu">
         <ul>
+            <li>
+                <a href="#" onclick="showSection('home')">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+            </li>
             <li>
                 <a href="#" onclick="showSection('dashboard')">
                     <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
@@ -43,27 +68,64 @@
     <div class="sidebar-hover-area"></div>
 
     <div id="content">
-        <div id="dashboard" class="section">
-            <h2>Admin Dashboard</h2>
-            <p>Welcome to the admin panel!</p>
+        <div id="home" class="section active">
+            <h1>Welcome to the TAS</h1>
         </div>
-        <h2>Dashboard Overview</h2>
 
-        <div id="totalStudentsCard">
-            <h3>Total Students Enrolled: <span id="totalStudents">0</span></h3>
+        <div id="dashboard" class="section" style="display: none;">
+            <h2>Admin Dashboard</h2>
+            <h2>Dashboard Overview</h2>
+            <div id="totalStudentsCard" class="card">
+                <h3>Total Students Enrolled: <span id="totalStudents">0</span></h3>
+            </div>
+            <div class="card">
+                <h3>Attendance Percentage: <span id="attendancePercentage">0%</span></h3>
+            </div>
+            <button id="javaButton">Java</button>
+            <button id="pythonButton">Python</button>
         </div>
-        
-        <div class="card">
-            <h3>Attendance Percentage: <span id="attendancePercentage">0%</span></h3>
+
+        <div id="report" class="section" style="display: none;">
+            <h2>Attendance Report</h2>
+            <div id="reportContent"></div>
         </div>
-        
-        <button id="javaButton">Java</button>
-        <button id="pythonButton">Python</button>
     </div>
 
     <script>
-        // Fetch total student count
-        $(document).ready(function() {
+        // Function to show the selected section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none'; // Hide all sections
+            });
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block'; // Show the selected section
+
+            // Load data for the dashboard if it's the dashboard section
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            }
+        }
+
+        function loadDashboardData() {
+            // Fetch total student count
+            fetch('/api/getStudentCount')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalStudents').innerText = data.totalStudents;
+                })
+                .catch(error => console.error('Error fetching total student count:', error));
+
+            // Fetch attendance percentage
+            fetch('/api/getAttendancePercentage')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
+                })
+                .catch(error => console.error('Error fetching attendance percentage:', error));
+        }
+
+        $(document).ready(function () {
             // Fetch Java enrolled students
             $('#javaButton').click(function() {
                 $.get('/api/getJavaEnrolledCount', function(data) {
@@ -106,38 +168,44 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Clear the current content
-                    const contentArea = document.getElementById('content');
-                    contentArea.innerHTML = '';
-            
+                    // Clear the current report content
+                    const reportContent = document.getElementById('reportContent');
+                    reportContent.innerHTML = '';
+
                     // Create a table to display the report
                     let reportTable = '<table class="report-table"><caption>Attendance Report</caption><thead><tr><th>Index</th><th>Date</th><th>Student Name</th><th>Email Address</th><th>Course Enrolled</th><th>Lecture Join Time</th><th>Lecture Leave Time</th><th>Attendance Status</th></tr></thead><tbody>';
-            
-                        data.forEach(record => {
-                            reportTable += `<tr>
-                                <td>${record.index}</td>
-                                <td>${new Date(record.date).toLocaleDateString()}</td> <!-- Format date -->
-                                <td>${record.studentName}</td>
-                                <td>${record.emailAddress}</td>
-                                <td>${record.courseEnrolled}</td>
-                                <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
-                                <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
-                                <td>${record.attendanceStatus}</td>
-                            </tr>`;
-                        });
-            
+
+                    data.forEach(record => {
+                        reportTable += `<tr>
+                            <td>${record.index}</td>
+                            <td>${new Date(record.date).toLocaleDateString()}</td> <!-- Format date -->
+                            <td>${record.studentName}</td>
+                            <td>${record.emailAddress}</td>
+                            <td>${record.courseEnrolled}</td>
+                            <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
+                            <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
+                            <td>${record.attendanceStatus}</td>
+                        </tr>`;
+                    });
+
                     reportTable += '</tbody></table>';
-            
-                    // Append the report table to the content area
-                    contentArea.innerHTML = reportTable;
+
+                    // Append the report table to the report content area
+                    reportContent.innerHTML = reportTable;
+
+                    // Show the report section
+                    showSection('report');
                 })
                 .catch(error => {
                     console.error('Error fetching report:', error);
-                    document.getElementById('content').innerHTML = '<p>Error loading report. Please try again later.</p>';
+                    document.getElementById('reportContent').innerHTML = '<p>Error loading report. Please try again later.</p>';
                 });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Show the home section by default on page load
+            showSection('home');
+
             // Add event listener for hovering the sidebar hover area
             const sidebar = document.querySelector('.main-menu');
             const hoverArea = document.querySelector('.sidebar-hover-area');
@@ -153,27 +221,10 @@
             hoverArea.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
             });
-        
             sidebar.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
             });
         });
-
-        window.onload = function() {
-            fetch('/api/getStudentCount') // Ensure the endpoint matches your route
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('totalStudents').innerText = data.totalStudents;
-                })
-                .catch(error => {
-                    console.error('Error fetching total student count:', error);
-                });
-        };
     </script>
 </body>
 </html>
