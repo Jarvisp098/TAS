@@ -105,9 +105,9 @@ app.get('/api/getAttendancePercentage', async (req, res) => {
         const attendedPythonStudents = await LectureAttendance.countDocuments({ course: 'Python', status: 'attended' });
 
         // Calculate attendance percentage for Java
-        const javaPercentage = totalJavaStudents > 0 ? ((attendedJavaStudents / totalJavaStudents) * 100).toFixed(2) : 0;
+        const javaPercentage = totalJavaStudents > 0 ? Math.min(((attendedJavaStudents / totalJavaStudents) * 100).toFixed(2), 100) : 0;
         // Calculate attendance percentage for Python
-        const pythonPercentage = totalPythonStudents > 0 ? ((attendedPythonStudents / totalPythonStudents) * 100).toFixed(2) : 0;
+        const pythonPercentage = totalPythonStudents > 0 ? Math.min(((attendedPythonStudents / totalPythonStudents) * 100).toFixed(2), 100) : 0;
         // Return the result
         res.json({ javaPercentage, pythonPercentage });
     } catch (error) {
