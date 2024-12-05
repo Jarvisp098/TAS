@@ -10,6 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
 </head>
 <body>
+    <% if (typeof successMessage !== 'undefined') { %>
+        <div class="alert alert-success">
+            <%= successMessage %>
+        </div>
+    <% } %>
     <header>
         <h1>Student Dashboard</h1>
     </header>

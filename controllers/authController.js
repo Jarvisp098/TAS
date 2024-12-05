@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
             if (!result) {
                 return res.status(401).send('Invalid admin credentials');
             }
-            redirectPath = 'admin-dashboard'; // No .ejs extension
+            redirectPath = 'admin-dashboard';
             userIdForJWT = user._id.toString();
         } else {
             // User is a student
@@ -41,6 +41,8 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: userIdForJWT, role: user.role, selectedCourses: user.selectedCourses }, 'seceret_key');
         res.cookie('jwt', token, { maxAge: 5 * 60 * 1000, httpOnly: true, secure: true }); // Secure for HTTPS
 
+        // Render the appropriate dashboard with user data and success message
+        const successMessage = `Login successful! Welcome, ${userName}.`;
         // Render the appropriate dashboard with user data
         res.render(redirectPath, { user, studentName: userName, studentEmail: user.email });
 
