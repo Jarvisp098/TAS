@@ -1,0 +1,45 @@
+<!-- In views/student-report.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Ensure this points to your CSS file -->
+</head>
+<body>
+    <header>
+        <h1>Your Attendance Report</h1>
+    </header>
+
+    <div id="content">
+        <div class="card">
+            <h2>Attendance Details</h2>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Date</th>
+                        <th>Course</th>
+                        <th>Join Time</th>
+                        <th>Leave Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% attendances.forEach((attendance, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= new Date(attendance.joinTime).toLocaleDateString() %></td>
+                            <td><%= attendance.course %></td>
+                            <td><%= new Date(attendance.joinTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td>
+                            <td><%= attendance.leaveTime ? new Date(attendance.leaveTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A' %></td>
+                            <td><%= attendance.status %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

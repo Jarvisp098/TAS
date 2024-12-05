@@ -69,6 +69,21 @@ router.get('/student-dashboard', authMiddleware, (req, res) => { // Middleware a
     }
 });
 
+// In routes/dashboardRoutes.js
+router.get('/student-report', authMiddleware, async (req, res) => {
+  try {
+      const userId = req.user.id; // Get the user ID from the request
+      const attendances = await LectureAttendance.find({ userId: userId }) // Fetch attendance records for the logged-in student
+          .populate('userId', 'name email') // Populate user details if needed
+          .exec();
+
+      res.render('student-report', { user: req.user, attendances }); // Pass user and attendance data to the template
+  } catch (error) {
+      console.error('Error fetching attendance report:', error);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
 router.get('/lecture/:course', authMiddleware, (req, res) => {
   const { course } = req.params;
   res.render('lecture', { course }); // Pass the course to the lecture page
