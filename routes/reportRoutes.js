@@ -2,38 +2,9 @@ const express = require('express');
 const router = express.Router();
 const StudentRecord = require('../models/studentRecord');
 const LectureAttendance = require('../models/lectureAttendance');
-
-// Route to fetch report data
-// router.get('/report', async (req, res) => {
-//     try {
-//         // Fetch all students and their attendance records
-//         const students = await StudentRecord.find().populate('attendance', 'date status course');
-
-//         // Prepare the report data
-//         const reportData = students.map((student) => {
-//             const lectureAttendances = student.attendance;
-//             return lectureAttendances.map((attendance, index) => ({
-//                 index: index + 1,
-//                 date: attendance.date,
-//                 studentName: student.name,
-//                 emailAddress: student.email,
-//                 courseEnrolled: attendance.course,
-//                 lectureJoinTime: attendance.joinTime,
-//                 lectureLeaveTime: attendance.leaveTime,
-//                 attendanceStatus: attendance.status,
-//             }));
-//         });
-
-//         // Flatten the report data
-//         const flattenedReportData = [].concat(...reportData);
-
-//         // Send the report data as JSON
-//         res.json(flattenedReportData);
-//     } catch (error) {
-//         console.error('Error generating report:', error);
-//         res.status(500).send('Internal Server Error');
-//     }
-// });
+const json2csv = require('json2csv').parse; // For CSV conversion
+const pdf = require('html-pdf'); // For PDF generation
+const fs = require('fs'); // For file system operations
 
 router.get('/report', async (req, res) => {
     try {
@@ -74,5 +45,80 @@ router.get('/report', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+// New route for generating reports
+router.get('/generateReport', async (req, res) => {
+    try {
+        const attendances = await LectureAttendance.find()
+            .populate('userId', 'name email') // Populate userId to get student details
+            .exec();
+
+        const reportData = attendances.map((attendance, index) => {
+            if (attendance.userId) {
+                return {
+                    index: index + 1,
+                    studentName: attendance.userId.name,
+                    emailAddress: attendance.userId.email,
+                    courseEnrolled: attendance.course,
+                    lectureJoinTime: attendance.joinTime,
+                    lectureLeaveTime: attendance.leaveTime,
+                    attendanceStatus: attendance.status,
+                    date: attendance.joinTime
+                };
+            } else {
+                return {
+                    index: index + 1,
+                    studentName: 'Unknown',
+                    emailAddress: 'N/A',
+                    courseEnrolled: attendance.course,
+                    lectureJoinTime: attendance.joinTime,
+                    lectureLeaveTime: attendance.leaveTime,
+                    attendanceStatus: attendance.status,
+                    date: attendance.joinTime
+                };
+            }
+        });
+
+        // Check for the format query parameter
+        const format = req.query.format; // Get the format from the query
+
+        if (format === 'csv') {
+            const csv = json2csv(reportData);
+            res.header('Content-Type', 'text/csv');
+            res.attachment('report.csv');
+            res.send(csv);
+        } else if (format === 'pdf') {
+            const html = generateHTML(reportData); // Function to generate HTML for PDF
+            pdf.create(html).toFile('./report.pdf', (err, result) => {
+                if (err) return res.send(Promise.reject(err));
+                res.download(result.filename); // Download the generated PDF
+            });
+        } else {
+            res.status(400).send('Invalid format. Use "csv" or "pdf".');
+        }
+    } catch (error) {
+        console.error('Error generating report:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Function to generate HTML for PDF
+function generateHTML(data) {
+    let html = '<h1>Attendance Report</h1><table><tr><th>Index</th><th>Student Name</th><th>Email</th><th>Course</th><th>Join Time</th><th>Leave Time</th><th>Status</th><th>Date</th></tr>';
+    data.forEach(row => {
+        html += `<tr>
+            <td>${row.index}</td>
+            <td>${ row.studentName}</td>
+            <td>${row.emailAddress}</td>
+            <td>${row.courseEnrolled}</td>
+            <td>${row.lectureJoinTime}</td>
+            <td>${row.lectureLeaveTime}</td>
+            <td>${row.attendanceStatus}</td>
+            <td>${row.date}</td>
+        </tr>`;
+    });
+    html += '</table>';
+    return html;
+}
 
 module.exports = router;

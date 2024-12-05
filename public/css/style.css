@@ -196,3 +196,19 @@ header {
   letter-spacing: 1px;
   color: #1f2937; /* Dark text for caption */
 }
+
+#home h1 {
+  font-size: 80px;
+  background-image: linear-gradient(-45deg,
+                      #ff1111,
+                      #ffe604,
+                      #6cff09,
+                      #03ffea,
+                      #ff12ff);
+  background-position: 0 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-size: 200%;
+  text-align: center;
+}

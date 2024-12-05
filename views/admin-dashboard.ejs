@@ -7,26 +7,10 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Additional styles for the home section */
-       
-
-        #home h1 {
-            font-size: 80px;
-            background-image: linear-gradient(-45deg,
-                                #ff1111,
-                                #ffe604,
-                                #6cff09,
-                                #03ffea,
-                                #ff12ff);
-            background-position: 0 0;
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            background-size: 200%;
-            text-align: center;
-        }
-    </style>
+    <!-- Include jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Include autoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.10/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <header>
@@ -87,11 +71,17 @@
 
         <div id="report" class="section" style="display: none;">
             <h2>Attendance Report</h2>
+            <div>
+                <!-- Buttons for downloading the report -->
+                <button onclick="downloadCSV()" class="btn btn-primary">Download CSV</button>
+            </div>
             <div id="reportContent"></div>
         </div>
     </div>
 
     <script>
+        let reportData = []; // Global variable to store report data
+
         // Function to show the selected section
         function showSection(sectionId) {
             // Hide all sections
@@ -168,6 +158,9 @@
                     return response.json();
                 })
                 .then(data => {
+                    // Store the report data globally
+                    reportData = data;
+
                     // Clear the current report content
                     const reportContent = document.getElementById('reportContent');
                     reportContent.innerHTML = '';
@@ -202,6 +195,37 @@
                 });
         }
 
+        // Function to download report as CSV
+        function downloadCSV() {
+            const csvRows = [];
+            const headers = ['Index', 'Date', 'Student Name', 'Email Address', 'Course Enrolled', 'Lecture Join Time', 'Lecture Leave Time', 'Attendance Status'];
+            csvRows.push(headers.join(','));
+
+            reportData.forEach(record => {
+                const row = [
+                    record.index,
+                    new Date(record.date).toLocaleDateString(),
+                    record.studentName,
+                    record.emailAddress,
+                    record.courseEnrolled,
+                    record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A',
+                    record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A',
+                    record.attendanceStatus
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text /csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'attendance_report.csv');
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+    
         document.addEventListener('DOMContentLoaded', function() {
             // Show the home section by default on page load
             showSection('home');
