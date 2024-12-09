@@ -227,24 +227,33 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Show the home section by default on page load
             showSection('home');
-
+        
             // Add event listener for hovering the sidebar hover area
             const sidebar = document.querySelector('.main-menu');
             const hoverArea = document.querySelector('.sidebar-hover-area');
             
             hoverArea.addEventListener('mouseenter', () => {
                 sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded'); // Add expanded class
+                document.getElementById('content').style.marginLeft = '250px'; // Shift content right
             });
         
             sidebar.addEventListener('mouseenter', () => {
                 sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded'); // Add expanded class
+                document.getElementById('content').style.marginLeft = '250px'; // Shift content right
             });
         
             hoverArea.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
+                sidebar.classList.remove('expanded'); // Remove expanded class
+                document.getElementById('content').style.marginLeft = '60px'; // Shift content back
             });
+        
             sidebar.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
+                sidebar.classList.remove('expanded'); // Remove expanded class
+                document.getElementById('content').style.marginLeft = '60px'; // Shift content back
             });
         });
     </script>

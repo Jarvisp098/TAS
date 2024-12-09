@@ -71,18 +71,62 @@
     
 
     <script>
+        // Function to show the active section
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.display = 'none'; // Hide all sections
+            });
+    
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.style.display = 'block'; // Show the selected section
+            }
+    
+            // Load attendance report if the section is active
+            if (sectionId === 'attendanceReport') {
+                loadAttendanceReport();
+            }
+        }
+    
+        // Add event listener for hovering the sidebar hover area
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.main-menu');
+            const hoverArea = document.querySelector('.sidebar-hover-area');
+        
+            // Start with the sidebar collapsed
+            sidebar.classList.add('collapsed'); // Start collapsed
+            showSection('home'); // Show the home section by default
+        
+            hoverArea.addEventListener('mouseenter', () => {
+                sidebar.classList.remove('collapsed');
+            });
+        
+            sidebar.addEventListener('mouseenter', () => {
+                sidebar.classList.remove('collapsed');
+            });
+        
+            hoverArea.addEventListener('mouseleave', () => {
+                sidebar.classList.add('collapsed');
+            });
+        
+            sidebar.addEventListener('mouseleave', () => {
+                sidebar.classList.add('collapsed');
+            });
+        });
+    
         // Function to join a lecture (for example, sending a timestamp)
         async function joinLecture(course) {
             const joinTime = new Date().toISOString(); // Get the current time in ISO format
             console.log(`Attempting to join lecture for course: ${course} at ${joinTime}`); // Log the course and join time
-        
+    
             // Ensure course is either 'Java' or 'Python'
             const validCourses = ['Java', 'Python'];
             if (!validCourses.includes(course)) {
                 console.error(`Invalid course: ${course}`);
                 return;
             }
-        
+    
             const response = await fetch('/joinLecture', {
                 method: 'POST',
                 headers: {
@@ -90,9 +134,9 @@
                 },
                 body: JSON.stringify({ course, joinTime }) // Include joinTime in the request body
             });
-        
+    
             console.log('Response status:', response.status); // Log the response status
-        
+    
             if (response.ok) {
                 // If the response is successful, redirect to the lecture page
                 const lecturePageUrl = `/lecture/${course}`;
@@ -105,30 +149,12 @@
                 alert(`Error joining lecture: ${errorMessage}`);
             }
         }
-        
-        // Function to show the active section
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.style.display = 'none'; // Hide all sections
-            });
-
-            const activeSection = document.getElementById(sectionId);
-            if (activeSection) {
-                activeSection.style.display = 'block'; // Show the selected section
-            }
-
-            // Load attendance report if the section is active
-            if (sectionId === 'attendanceReport') {
-                loadAttendanceReport();
-            }
-        }
-
+    
         // Function to load the attendance report
         async function loadAttendanceReport() {
             const reportContent = document.getElementById('reportContent');
             reportContent.innerHTML = '<p>Loading attendance report...</p>'; // Show loading message
-
+    
             try {
                 const response = await fetch('/student-report'); // Fetch the student report
                 if (response.ok) {
@@ -142,30 +168,6 @@
                 reportContent.innerHTML = '<p>Error loading attendance report.</p>'; // Show error message
             }
         }
-    
-        // Add event listener for hovering the sidebar hover area
-        const sidebar = document.querySelector('.main-menu');
-        const hoverArea = document.querySelector('.sidebar-hover-area');
-    
-        hoverArea.addEventListener('mouseenter', () => {
-            sidebar.classList.remove('collapsed');
-        });
-    
-        sidebar.addEventListener('mouseenter', () => {
-            sidebar.classList.remove('collapsed');
-        });
-    
-        hoverArea.addEventListener('mouseleave', () => {
-            sidebar.classList.add('collapsed');
-        });
-    
-        sidebar.addEventListener('mouseleave', () => {
-            sidebar.classList.add('collapsed');
-        });
-    
-        window.onload = function() {
-            showSection('home'); // Show home section by default
-        };
     </script>
 </body>
 </html>
