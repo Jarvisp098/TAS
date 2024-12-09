@@ -89,6 +89,9 @@ router.get('/lecture/:course', authMiddleware, (req, res) => {
   res.render('lecture', { course }); // Pass the course to the lecture page
 });
 
+router.get('/edit-student', authMiddleware, (req, res) => {
+  res.render('editStudentForm'); // Render the edit student page
+});
 
 // Other routes...
 router.post('/selectCourse', authMiddleware, dashboardController.selectCourse);

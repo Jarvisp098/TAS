@@ -27,6 +27,11 @@
                 </a>
             </li>
             <li>
+                <a href="#" onclick="showEditStudentForm()">
+                    <i class="fas fa-user-edit"></i> <span>Edit Student</span>
+                </a>
+            </li>
+            <li>
                 <a href="#" onclick="loadReport()">
                     <i class="fas fa-file-alt"></i> <span>Report</span>
                 </a>
@@ -59,10 +64,11 @@
             <button id="pythonButton">Python</button>
         </div>
 
+        <div id="editStudentContainer" style="display: none;"></div>
+
         <div id="report" class="section" style="display: none;">
             <h2>Attendance Report</h2>
             <div>
-                <!-- Buttons for downloading the report -->
                 <button onclick="downloadCSV()" class="btn btn-primary">Download CSV</button>
             </div>
             <div id="reportContent"></div>
@@ -78,9 +84,13 @@
             document.querySelectorAll('.section').forEach(section => {
                 section.style.display = 'none'; // Hide all sections
             });
+    
+            // Hide the edit student container when switching sections
+            document.getElementById('editStudentContainer').style.display = 'none'; // Hide the edit student form
+    
             // Show the selected section
             document.getElementById(sectionId).style.display = 'block'; // Show the selected section
-
+    
             // Load data for the dashboard if it's the dashboard section
             if (sectionId === 'dashboard') {
                 loadDashboardData();
@@ -147,6 +157,81 @@
                     console.error('Error fetching attendance percentages:', error);
                 });
         }
+
+        function showEditStudentForm() {
+            // Hide all sections first
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none'; // Hide all sections
+            });
+        
+            // Now show the edit student container
+            fetch('/api/edit-student-form') // Adjust the path to your editStudentForm.ejs
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('editStudentContainer').innerHTML = html; // Insert the form HTML
+                    document.getElementById('editStudentContainer').style.display = 'block'; // Show the form
+        
+                    // Attach the event listener for the fetch button here
+                    document.getElementById('fetchStudentBtn').addEventListener('click', async () => {
+                        const studentId = document.getElementById('studentId').value; // Get the student ID from the input field
+                        if (!studentId) {
+                            alert('Please enter a Student ID');
+                            return;
+                        }
+        
+                        try {
+                            const response = await fetch(`/api/get-student/${studentId}`); // Fetch student data from the server
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            const data = await response.json();
+        
+                            // Check if student data is returned
+                            if (data.student) {
+                                // Display the student data in the studentInfo div
+                                document.getElementById('studentInfo').innerHTML = `
+                                    <p><strong>Student ID:</strong> ${data.student.studentId}</p>
+                                    <p><strong>Name:</strong> ${data.student.name}</p>
+                                    <p><strong>Email:</strong> ${data.student.email}</p>
+                                    <p><strong>Selected Courses:</strong> ${data.student.selectedCourses.join(', ')}</p>
+                                `;
+                                document.getElementById('studentData').style.display = 'block'; // Show the student data section
+                            } else {
+                                document.getElementById('studentInfo').innerHTML = '<p>Student not found.</p>';
+                                document.getElementById('studentData').style.display = 'block'; // Show the student data section
+                            }
+                        } catch (error) {
+                            console.error('Error fetching student data:', error);
+                            alert('Error fetching student data. Please try again.');
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading edit student form:', error);
+                });
+        }
+    
+        function fetchStudentData() {
+            const studentId = document.getElementById('studentId').value; // Get the student ID from the input
+    
+            fetch(`/api/get-student/${studentId}`) // Call the API endpoint
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Student not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Populate the form with the fetched student data
+                    document.getElementById('name').value = data.student.name;
+                    document.getElementById('email').value = data.student.email;
+                })
+                .catch(error => {
+                    console.error('Error fetching student data:', error);
+                    alert('Error fetching student data. Please check the Student ID.');
+                });
+        }
+    
 
         function loadReport() {
             fetch('/api/report') // Ensure this endpoint is correct

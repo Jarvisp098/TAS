@@ -5,7 +5,7 @@ const AttendanceManager = require('../models/attendanceManager.js'); // Require 
 require('dotenv').config();
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, studentId } = req.body; // Include studentId in the request body
     try {
         let user;
         let redirectPath;
@@ -23,10 +23,18 @@ exports.login = async (req, res) => {
             userIdForJWT = user._id.toString();
         } else {
             // User is a student
-            user = await StudentRecord.findOne({ email });
+            if (studentId) {
+                // Check for student login using studentId
+                user = await StudentRecord.findOne({ studentId });
+            } else {
+                // Check for student login using email
+                user = await StudentRecord.findOne({ email });
+            }
+
             if (!user) {
                 return res.status(400).send('Invalid credentials');
             }
+
             const result = await bcrypt.compare(password, user.password);
             if (!result) {
                 return res.status(401).send('Invalid credentials');

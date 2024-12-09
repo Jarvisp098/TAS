@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="/css/edit-student.css">
+
+</head>
+<body>
+    <h2>Edit Student</h2>
+
+    <!-- Add Student Form -->
+    <div class="form-section">
+        <h3>Add Student</h3>
+        <form action="/api/add-student" method="POST" onsubmit="return handleFormSubmit();">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+
+            <h3>Select Courses:</h3>
+            <label>
+                <input type="checkbox" name="selectedCourses" value="Java"> Java
+            </label>
+            <label>
+                <input type="checkbox" name="selectedCourses" value="Python"> Python
+            </label>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </div>
+
+    <!-- Update Student Form -->
+    <div class="form-section">
+        <h3>Update Student</h3>
+        <form id="updateStudentForm" action="/api/update-student" method="POST" onsubmit="return handleUpdateFormSubmit();">
+            <input type="text" id="studentId" name="studentId" placeholder="Student ID" required>
+            <button type="button" id="fetchStudentBtn">Fetch Student Data</button>
+            <input type="text" id="name" name="name" placeholder="New Name">
+            <input type="email" id="email" name="email" placeholder="New Email">
+            <button type="submit">Update Student</button>
+        </form>
+    </div>
+
+    <!-- Delete Student Form -->
+    <div class="form-section">
+        <h3>Delete Student</h3>
+        <form action="/api/delete-student" method="POST" onsubmit="return handleDeleteFormSubmit();">
+            <input type="text" name="studentId" placeholder="Student ID" required>
+            <button type="submit">Delete Student</button>
+        </form>
+    </div>
+
+    <!-- Display Student Data -->
+    <div id="studentData">
+        <h3>Student Data</h3>
+        <p id="studentInfo">No student data available.</p>
+    </div>
+
+    <script>
+        // JavaScript functions for handling form submissions and fetching student data
+        function handleFormSubmit() {
+            // Logic for adding a student
+            return true; // Allow form submission
+        }
+
+        function handleUpdateFormSubmit() {
+            // Logic for updating a student
+            return true; // Allow form submission
+        }
+
+        function handleDeleteFormSubmit() {
+            // Logic for deleting a student
+            return true; // Allow form submission
+        }
+
+        document.getElementById('fetchStudentBtn').addEventListener('click', function() {
+            const studentId = document.getElementById('studentId').value;
+            // Logic to fetch student data based on studentId
+        });
+    </script>
+</body>
+</html

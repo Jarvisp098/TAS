@@ -250,3 +250,7 @@ header {
 .course-button:hover {
   background-color: #2C3E50; /* Darker shade on hover */
 }
+
+#btn btn-primary {
+  text-align: right;
+}

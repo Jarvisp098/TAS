@@ -2,11 +2,18 @@ const express = require('express');
 const router = express.Router();
 const studentController = require('../controllers/studentController');
 
-//home route
-router.get('/home', studentController.getHome);
 
 //Student management routes
-router.post('/add-student', studentController.addStudent);
-router.post('/update-attendance', studentController.updateAttendance);
+router.post('/api/add-student', studentController.addStudent);
+// Update Student
+router.post('/api/update-student', studentController.updateStudent);
+// studentRoutes.js
+router.get('/api/get-student/:studentId', studentController.getStudentById);
+// Delete Student
+router.post('/api/delete-student', studentController.deleteStudent);
+
+router.get('/api/edit-student-form', (req, res) => {
+    res.render('editStudentForm'); // Adjust the path if necessary
+});
 
 module.exports = router;

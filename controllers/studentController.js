@@ -1,31 +1,39 @@
 const StudentRecord = require('../models/studentRecord');
 const AttendanceManager = require('../models/attendanceManager.js');
 const moment = require('moment-timezone');
-
-exports.getHome = async (req, res) =>{
-    try{
-        const students = await StudentRecord.find({});
-
-        const maxAttendanceCount = students.length;
-
-        res.render('attendance.ejs', {students, maxAttendanceCount});
-
-    }catch(error){
-        res.status(500).send('Internal Server Error');
-    }
-}
+const bcrypt = require('bcrypt');
 
 exports.addStudent = async (req, res) => {
     try {
+        const { name, email, password, selectedCourses } = req.body;
+
+        // Fetch the last studentId from the database
+        const lastStudent = await StudentRecord.findOne().sort({ studentId: -1 }).exec();
+        let lastStudentId = lastStudent ? parseInt(lastStudent.studentId.replace('TAS', '')) : 0; // Extract the numeric part and convert to integer
+
+        // Generate the new studentId
+        const newStudentId = `TAS${String(lastStudentId + 1).padStart(2, '0')}`; // Increment and format
+
+        // Check if the new studentId already exists (should not happen with this logic)
+        const existingStudent = await StudentRecord.findOne({ studentId: newStudentId });
+        if (existingStudent) {
+            return res.status(400).send('Student ID already exists. Please try again.');
+        }
+
+        // Hash the password before saving
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+
         const student = new StudentRecord({
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
+            studentId: newStudentId, // Use the custom formatted student ID
+            name,
+            email,
+            password: hashedPassword, // Store the hashed password
             role: 'student',
-            selectedCourses: req.body.selectedCourses // Ensure selectedCourses is included
+            selectedCourses: selectedCourses || [] // Ensure selectedCourses is included
         });
+
         await student.save();
-        res.redirect('/home');
+        res.status(201).send('Student added successfully');
     } catch (error) {
         console.log('Error Adding Student', error);
         res.status(500).send('Internal Server Error');
@@ -35,48 +43,59 @@ exports.addStudent = async (req, res) => {
 
 
 exports.deleteStudent = async (req, res) => {
-    try{
-       const studentName = req.body.name;
-       const result = await StudentRecord.deleteOne({ name: studentName });
+    try {
+        const { studentId } = req.body; // Get studentId from the request body
 
-       if(result.deletedCount === 0){
-         res.status(404).send('Student not found');
-       } else {
-        res.redirect('/home');
-       }
+        const result = await StudentRecord.deleteOne({ studentId: studentId });
 
-    }catch(error){
-       console.log('Error Adding Student');
-       res.status(500).send('Internal Server Error');
+        if (result.deletedCount === 0) {
+            return res.status(404).send('Student not found');
+        } else {
+            res.redirect('/home'); // Redirect after successful deletion
+        }
+    } catch (error) {
+        console.log('Error deleting student:', error);
+        res.status(500).send('Internal Server Error');
     }
 };
 
 
-exports.updateStudent = async (req, res) =>{
+exports.updateStudent = async (req, res) => {
+    const { studentId, name, email } = req.body;
 
-    const { attendanceDate } = req.body;
-    const length = req.body.attendace ? req.body.attendace.length : 0;
+    try {
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
 
-    console.log(req.bodyattendance);
+        const updatedStudent = await StudentRecord.findOneAndUpdate({ studentId: studentId }, updateData, { new: true });
 
-   try{
-      for(let i = 0; i < length; i++){
-        const studentID = req.body.attendance[i];
-        await StudentRecord.findByIdAndUpdate(
-            studentID,
-            {
-                $inc: { attendanceCount: 1},
-                $push: { attendance : {date: new Date(attendanceDate), status: 'present'}}
-            },
-            {new: true}
-        )
-      }
-        res,redirect('/home');
-    }catch(error){
-       console.log('Error updating student records.');
-       res.status(500).send('Internal Server Error');
+        if (!updatedStudent) {
+            return res.status(404).send('Student not found');
+        }
+
+        res.redirect('/edit-student'); // Redirect back to the edit student page
+    } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).send('Internal Server Error');
     }
 };
+
+exports.getStudentById = async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        const student = await StudentRecord.findOne({ studentId: studentId });
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        res.json({ student });
+    } catch (error) {
+        console.error('Error fetching student:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 exports.updateAttendance = async (req, res) => {
     try {
         const { attendanceDate } = req.body;
