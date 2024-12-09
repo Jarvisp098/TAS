@@ -102,23 +102,4 @@ router.get('/generateReport', async (req, res) => {
     }
 });
 
-// Function to generate HTML for PDF
-function generateHTML(data) {
-    let html = '<h1>Attendance Report</h1><table><tr><th>Index</th><th>Student Name</th><th>Email</th><th>Course</th><th>Join Time</th><th>Leave Time</th><th>Status</th><th>Date</th></tr>';
-    data.forEach(row => {
-        html += `<tr>
-            <td>${row.index}</td>
-            <td>${ row.studentName}</td>
-            <td>${row.emailAddress}</td>
-            <td>${row.courseEnrolled}</td>
-            <td>${row.lectureJoinTime}</td>
-            <td>${row.lectureLeaveTime}</td>
-            <td>${row.attendanceStatus}</td>
-            <td>${row.date}</td>
-        </tr>`;
-    });
-    html += '</table>';
-    return html;
-}
-
 module.exports = router;

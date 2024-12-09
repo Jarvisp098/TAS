@@ -1,9 +1,9 @@
-body {
-    font-family: Arial, sans-serif;
-    background-image: url('/images/bg2.jpg');
-    background-size: cover;
-    margin: 0;
-    padding: 0;
+body { 
+    margin: 0; 
+    padding: 0; 
+    font-family: Arial, sans-serif; 
+    background: linear-gradient(to right, #3D9970, #2C3E50); /* Gradient from #3D9970 to #2C3E50 */ height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    color: rgb(0, 0, 0); /* Text color to make it readable */ 
 }
 
 #loginContainer {
@@ -53,7 +53,7 @@ body {
 
 
 #registerContainer input[type="submit"]:hover {
-    background: #0D8CEA; /* Slightly darker blue on hover */
+    background: #3D9970; /* Slightly darker blue on hover */
 }
 
 #registerContainer input {  /* Target register inputs only */
@@ -67,24 +67,26 @@ body {
   
 
 #login{
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    background: blue;
-    border-radius:25px;
-    width:100%;
-    color:#fff;
-    padding:5px;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom:10px;
+    background-color: #3D9970; /* Match the header background color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding for the button */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    margin-bottom: 10px; /* Add margin if needed */
+    width: 100%;
+}
+
+#login:hover {
+    background-color: #2C3E50;
 }
 h3 {
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.1rem; /* Relative font size */
-    color: #1DA1F2; /* Twitter blue color */
+    color: #3D9970; /* Twitter blue color */
 }
 
 label {

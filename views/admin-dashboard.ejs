@@ -6,6 +6,7 @@
     <title>Time Attendance System</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- Include Moment.js -->
 </head>
 <body>
     <header>
@@ -30,12 +31,11 @@
                     <i class="fas fa-file-alt"></i> <span>Report</span>
                 </a>
             </li>
-        
             <li>
-              <a href="/logout">
-                  <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-              </a>
-          </li>
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -70,7 +70,6 @@
     </div>
 
     <script>
-        
         let reportData = []; // Global variable to store report data
 
         // Function to show the selected section
@@ -101,7 +100,7 @@
             fetch('/api/getAttendancePercentage')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
+                    document.getElementById ('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
                 })
                 .catch(error => console.error('Error fetching attendance percentage:', error));
         }
@@ -149,21 +148,6 @@
                 });
         }
 
-        // Function to fetch attendance percentage
-        function fetchAttendancePercentage(course) {
-            fetch('/api/getAttendancePercentage')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
-                    if (course === 'Python') {
-                        document.getElementById('attendancePercentage').innerText = data.pythonPercentage + '%'; // Update to Python if specified
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching attendance percentages:', error);
-                });
-        }
-
         function loadReport() {
             fetch('/api/report') // Ensure this endpoint is correct
                 .then(response => {
@@ -190,8 +174,8 @@
                             <td>${record.studentName}</td>
                             <td>${record.emailAddress}</td>
                             <td>${record.courseEnrolled}</td>
-                            <td>${record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
-                            <td>${record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A'}</td> <!-- Format time -->
+                            <td>${record.lectureJoinTime ? moment(record.lectureJoinTime).format('hh:mm A') : 'N/A'}</td> <!-- Format time with Moment.js -->
+                            <td>${record.lectureLeaveTime ? moment(record.lectureLeaveTime).format('hh:mm A') : 'N/A'}</td> <!-- Format time with Moment.js -->
                             <td>${record.attendanceStatus}</td>
                         </tr>`;
                     });
@@ -223,15 +207,15 @@
                     record.studentName,
                     record.emailAddress,
                     record.courseEnrolled,
-                    record.lectureJoinTime ? new Date(record.lectureJoinTime).toLocaleTimeString() : 'N/A',
-                    record.lectureLeaveTime ? new Date(record.lectureLeaveTime).toLocaleTimeString() : 'N/A',
+                    record.lectureJoinTime ? moment(record.lectureJoinTime).format('hh:mm A') : 'N/A', // Format time with Moment.js
+                    record .lectureLeaveTime ? moment(record.lectureLeaveTime).format('hh:mm A') : 'N/A', // Format time with Moment.js
                     record.attendanceStatus
                 ];
                 csvRows.push(row.join(','));
             });
 
             const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text /csv;charset=utf-8;' });
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.setAttribute('href', url);
@@ -240,7 +224,6 @@
             URL.revokeObjectURL(url);
         }
 
-    
         document.addEventListener('DOMContentLoaded', function() {
             // Show the home section by default on page load
             showSection('home');
