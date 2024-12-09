@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <title>Attendance Report</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- Include Moment.js -->
 </head>
 <body>
     <h1>Attendance Report</h1>
@@ -25,8 +26,8 @@
                     <td><%= record.studentName %></td>
                     <td><%= record.emailAddress %></td>
                     <td><%= record.courseEnrolled %></td>
-                    <td><%= record.lectureJoinTime ? record.lectureJoinTime.toLocaleString() : 'N/A' %></td>
-                    <td><%= record.lectureLeaveTime ? record.lectureLeaveTime.toLocaleString() : 'N/A' %></td>
+                    <td><%= record.lectureJoinTime ? moment(record.lectureJoinTime).format('hh:mm A') : 'N/A' %></td>
+                    <td><%= record.lectureLeaveTime ? moment(record.lectureLeaveTime).format('hh:mm A') : 'N/A' %></td>
                     <td><%= record.attendanceStatus %></td>
                 </tr>
             <% }) %>
@@ -41,11 +42,10 @@
                     <td>${row.index}</td>
                     <td>${row.studentName}</td>
                     <td>${row.emailAddress}</td>
-                    <td>${row.courseEnrolled}</td>
-                    <td>${row.lectureJoinTime}</td>
-                    <td>${row.lectureLeaveTime}</td>
+                    <td>${row.lectureJoinTime ? moment(row.lectureJoinTime).format('hh:mm A') : 'N/A'}</td>
+                    <td>${row.lectureLeaveTime ? moment(row.lectureLeaveTime).format('hh:mm A') : 'N/A'}</td>
                     <td>${row.attendanceStatus}</td>
-         <td>${new Date(row.date).toLocaleDateString()}</td>
+                    <td>${moment(row.date).format('YYYY-MM-DD')}</td>
                 </tr>`;
             });
             html += '</table>';

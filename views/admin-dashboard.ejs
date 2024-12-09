@@ -8,11 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <% if (typeof successMessage !== 'undefined') { %>
-        <div class="alert alert-success">
-            <%= successMessage %>
-        </div>
-    <% } %>
     <header>
         <h1>Time Attendance System</h1>
     </header>
@@ -53,7 +48,6 @@
         </div>
 
         <div id="dashboard" class="section" style="display: none;">
-            <h2>Admin Dashboard</h2>
             <h2>Dashboard Overview</h2>
             <div id="totalStudentsCard" class="card">
                 <h3>Total Students Enrolled: <span id="totalStudents">0</span></h3>

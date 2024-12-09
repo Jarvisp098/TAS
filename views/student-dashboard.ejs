@@ -10,11 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
 </head>
 <body>
-    <% if (typeof successMessage !== 'undefined') { %>
-        <div class="alert alert-success">
-            <%= successMessage %>
-        </div>
-    <% } %>
     <header>
         <h1>Student Dashboard</h1>
     </header>
@@ -33,7 +28,7 @@
                 </a>
             </li>
             <li>
-                <a href="/student-report">
+                <a href="#" onclick="showSection('attendanceReport')">
                     <i class="fas fa-file-alt"></i> <span>View Attendance Report</span>
                 </a>
             </li>
@@ -51,9 +46,10 @@
     <div id="content">
         <div id="home" class="section">
             <h1>Welcome, <%= user.name %></h1>
+            <!-- You can add any other content for the home section here -->
         </div>
 
-        <div id="joinLectureSection">
+        <div id="joinLecture" class="section" style="display: none;">
             <h2>Join Lecture</h2>
             <% if (user.selectedCourses.includes('Java')) { %>
                 <button class="course-button" onclick="joinLecture('Java')">Join Java Lecture</button>
@@ -63,21 +59,19 @@
                 <button class="course-button" onclick="joinLecture('Python')">Join Python Lecture</button>
             <% } %>
         </div>
+
+        <div id="attendanceReport" class="section" style="display: none;">
+            <h2>Attendance Report</h2>
+            <div id="reportContent">
+                <!-- This is where the attendance report will be displayed -->
+                <p>Loading attendance report...</p>
+            </div>
+        </div>
     </div>
     
 
     <script>
-        // Add event listeners to course buttons
-        const courseButtons = document.querySelectorAll('.course-button');
-courseButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const courseName = button.textContent.trim(); // Get the course name without changing case
-        joinLecture(courseName); // Join the lecture
-    });
-});
-    
         // Function to join a lecture (for example, sending a timestamp)
-        let currentCourse = null;
         async function joinLecture(course) {
             const joinTime = new Date().toISOString(); // Get the current time in ISO format
             console.log(`Attempting to join lecture for course: ${course} at ${joinTime}`); // Log the course and join time
@@ -86,7 +80,6 @@ courseButtons.forEach(button => {
             const validCourses = ['Java', 'Python'];
             if (!validCourses.includes(course)) {
                 console.error(`Invalid course: ${course}`);
-                alert(`Invalid course selected: ${course}. Please select either Java or Python.`);
                 return;
             }
         
@@ -117,14 +110,36 @@ courseButtons.forEach(button => {
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.section');
             sections.forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none';
+                section.style.display = 'none'; // Hide all sections
             });
-    
+
             const activeSection = document.getElementById(sectionId);
             if (activeSection) {
-                activeSection.classList.add('active');
-                activeSection.style.display = 'block';
+                activeSection.style.display = 'block'; // Show the selected section
+            }
+
+            // Load attendance report if the section is active
+            if (sectionId === 'attendanceReport') {
+                loadAttendanceReport();
+            }
+        }
+
+        // Function to load the attendance report
+        async function loadAttendanceReport() {
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = '<p>Loading attendance report...</p>'; // Show loading message
+
+            try {
+                const response = await fetch('/student-report'); // Fetch the student report
+                if (response.ok) {
+                    const reportData = await response.text(); // Get the report data as text
+                    reportContent.innerHTML = reportData; // Display the report
+                } else {
+                    reportContent.innerHTML = '<p>Error loading attendance report.</p>'; // Show error message
+                }
+            } catch (error) {
+                console.error('Error fetching attendance report:', error);
+                reportContent.innerHTML = '<p>Error loading attendance report.</p>'; // Show error message
             }
         }
     
@@ -149,36 +164,8 @@ courseButtons.forEach(button => {
         });
     
         window.onload = function() {
-            showSection('home');
+            showSection('home'); // Show home section by default
         };
-    
-        // Function to select a course
-        // Function to select a course and join the lecture
-        function selectCourse(courseName) {
-            const userName = '<%= user.name %>'; // Assuming user object is passed to the template
-            const userEmail = '<%= user.email %>'; // Assuming user object is passed to the template
-            const joinTime = new Date().toISOString(); // Get the current date and time
-    
-            fetch('/joinLecture', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ course: courseName, name: userName, email: userEmail, joinTime: joinTime })
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert(`Successfully joined ${courseName} lecture!`);
-                    // Optionally, refresh the page or update the UI to reflect the attendance
-                } else {
-                    alert('Failed to join lecture.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error joining lecture.');
-            });
-        }
     </script>
 </body>
 </html>
