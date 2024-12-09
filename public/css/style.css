@@ -110,6 +110,7 @@ header {
 
 .section.active {
   display: block;
+  margin-top: 20px;
 }
 
 /* Dashboard and Report Cards */
@@ -226,7 +227,9 @@ header {
 }
 
 /* Button styling */
-.btn {
+.btn, #javaButton,
+#pythonButton,
+.course-button {
   background-color: #3D9970; /* Match the header background color */
   color: white; /* Text color */
   padding: 10px 20px; /* Padding for the button */
@@ -238,6 +241,8 @@ header {
   margin-top: 10px; /* Add some margin on top */
 }
 
-.btn:hover {
+.btn:hover, #javaButton:hover,
+#pythonButton:hover,
+.course-button:hover {
   background-color: #2C3E50; /* Darker shade on hover */
 }

@@ -5,7 +5,17 @@ const router = express.Router();
 // Import your MongoDB connection/model
 const StudentRecord = require('../models/studentRecord'); // Replace with your student model path
 
-// In your studentCount.js or similar route file
+router.get('/getStudentCount', async (req, res) => {
+  try {
+      const totalStudents = await StudentRecord.countDocuments(); // Count all documents
+      res.json({ totalStudents });
+  } catch (error) {
+      console.error('Error fetching total student count:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 router.get('/getJavaEnrolledCount', async (req, res) => {
   try {
       const javaCount = await StudentRecord.countDocuments({ selectedCourses: 'Java' });
