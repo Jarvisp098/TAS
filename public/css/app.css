@@ -1,30 +1,20 @@
-body { 
-    margin: 0; 
-    padding: 0; 
-    font-family: Arial, sans-serif; 
-    background: linear-gradient(to right, #3D9970, #2C3E50); /* Gradient from #3D9970 to #2C3E50 */ height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    color: rgb(0, 0, 0); /* Text color to make it readable */ 
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #3D9970, #2C3E50);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0, 0, 0);
 }
 
 #loginContainer {
-    width: 80%; /* Smaller width for responsiveness */
-    max-width: 300px; /* Limit maximum width */
-    min-height: 400px;
-    margin: 20px auto;
-    padding: 10px; /* Increased padding */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    display: flex; /* Added display flex */
-    flex-direction: column; /* Align children vertically */
-    justify-content: center; /* Center children vertically */
-}
-
-#registerContainer {
     width: 80%;
     max-width: 300px;
-    min-height: 400px;  /* Adjust as needed */
+    min-height: 400px;
     margin: 20px auto;
     padding: 10px;
     border: 1px solid #ccc;
@@ -36,65 +26,78 @@ body {
     justify-content: center;
 }
 
-#registerContainer input[type="submit"] { /* Target the submit button */
+#registerContainer {
+    width: 80%;
+    max-width: 300px;
+    min-height: 400px;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#registerContainer input[type="submit"] {
     border: none;
-    border-radius: 4px; /* Or 25px if you want the rounded look */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px; /* Adjust as needed */
-    background: blue; 
+    font-size: 14px;
+    background: blue;
     border-radius: 25px;
     width: 100%;
     color: #fff;
     padding: 5px;
     transition: background-color 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px; /* Add margin if needed */
+    margin-bottom: 10px;
 }
-
 
 #registerContainer input[type="submit"]:hover {
-    background: #3D9970; /* Slightly darker blue on hover */
+    background: #3D9970;
 }
 
-#registerContainer input {  /* Target register inputs only */
-    margin-top: 0px; /* Remove the margin */
-  }
-  
-  #registerContainer label { /* Target labels only */
-    margin-bottom: 1px; /* Add margin between label and input if needed */
-  }
+#registerContainer input {
+    margin-top: 0px;
+}
 
-  
+#registerContainer label {
+    margin-bottom: 1px;
+}
 
-#login{
-    background-color: #3D9970; /* Match the header background color */
-    color: white; /* Text color */
-    padding: 10px 20px; /* Padding for the button */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size */
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
-    margin-bottom: 10px; /* Add margin if needed */
+#login {
+    background-color: #3D9970;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
     width: 100%;
 }
 
 #login:hover {
     background-color: #2C3E50;
 }
+
 h3 {
     text-align: center;
     margin-bottom: 10px;
-    font-size: 1.1rem; /* Relative font size */
-    color: #3D9970; /* Twitter blue color */
+    font-size: 1.1rem;
+    color: #3D9970;
 }
 
 label {
-    margin-top:5px;
+    margin-top: 5px;
     color: black;
     display: block;
     font-weight: bold;
-    font-size: 0.9rem; /* Relative font size */
+    font-size: 0.9rem;
 }
 
 input[type="text"],
@@ -103,14 +106,13 @@ input[type="password"] {
     padding: 4px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 5px; /* Reduced margin */
+    margin-bottom: 5px;
     box-sizing: border-box;
-    font-size: 0.9rem; /* Relative font size */
+    font-size: 0.9rem;
 }
 
 input {
-
-margin-top:10px;
+    margin-top: 10px;
 }
 
 #button {
@@ -119,73 +121,66 @@ margin-top:10px;
     padding: 12px;
     border: none;
     border-radius: 10px;
-    background: #1DA1F2; /* Twitter blue color */
+    background: #1DA1F2;
     color: #fff;
-    font-size: 0.7rem; /* Relative font size */
+    font-size: 0.7rem;
     cursor: pointer;
-    margin-bottom: 8px; /* Reduced margin between buttons */
+    margin-bottom: 8px;
 }
 
 #spacer {
-    padding:21px;
-    font-size:13px;
+    padding: 21px;
+    font-size: 13px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align links to the left */
-    margin-top: 10px; /* Add spacing between buttons and links */
+    align-items: flex-start;
+    margin-top: 10px;
 }
-
 
 button:hover {
-    background: #0D8CEA; /* Slightly darker blue on hover */
+    background: #0D8CEA;
 }
 
-#align{
+#align {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align:left !important;
- }
+    text-align: left !important;
+}
 
- table{
- border: 1px solid lightblue;
- margin: 25px 0;
- font-size: 0.9em;
- font-family: sans-serif;
- min-width: 400px;
- box-shadow:  0 0 20px rgba(0, 0, 0, 0.15);
- }
+table {
+    border: 1px solid lightblue;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
 
- tr{
+tr {
     background-color: #009879;
     color: #fff;
     text-align: left;
+}
 
- }
+th, td {
+    padding: 12px 15px;
+}
 
- th,td{
- padding: 12px 15px;
- }
-
-
-/* Responsive adjustments */
 @media (max-width: 480px) {
     #loginContainer, #registerContainer {
-        margin: 50px auto; /* Adjust margin for smaller screen sizes */
-        padding: 10px; /* Reduce padding for smaller screen sizes */
+        margin: 50px auto;
+        padding: 10px;
     }
 
     h3 {
-      
-        font-size: 0.55rem; /* Adjust heading font size for smaller screen sizes */
+        font-size: 0.55rem;
     }
 
     label,
     input[type="text"],
     input[type="password"],
     button {
-        font-size: 0.4rem; /* Adjust font size for smaller screen sizes */
+        font-size: 0.4rem;
     }
-
-   
 }

@@ -2,10 +2,9 @@ const express = require('express');
 const authController = require('../controllers/authController.js');
 const bcrypt = require('bcrypt');
 const StudentRecord = require('../models/studentRecord');
-const AttendanceManager = require('../models/attendanceManager'); // Require your admin model
+const AttendanceManager = require('../models/attendanceManager');
 const router = express.Router();
 
-// Views (No changes needed here)
 router.get('/login', (req, res) => {
     res.render('login');
 });
@@ -22,11 +21,11 @@ router.get('/register-admin', (req, res) => {
     res.render('register', { userType: 'admin' });
 });
 
-// Controller actions (login and logout remain unchanged)
+
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 
-// Student Registration Route
+//student Registration Route
 router.post('/register-student', async (req, res) => {
     try {
         const { name, email, password, confirmPassword, selectedCourses } = req.body;
@@ -44,18 +43,17 @@ router.post('/register-student', async (req, res) => {
 
         // Fetch the last studentId from the database
         const lastStudent = await StudentRecord.findOne().sort({ studentId: -1 }).exec();
-        let lastStudentId = lastStudent ? parseInt(lastStudent.studentId.replace('TAS', '')) : 0; // Extract the numeric part and convert to integer
+        let lastStudentId = lastStudent ? parseInt(lastStudent.studentId.replace('TAS', '')) : 0; 
 
-        // Generate the new studentId
-        const newStudentId = `TAS${String(lastStudentId + 1).padStart(2, '0')}`; // Increment and format
+        const newStudentId = `TAS${String(lastStudentId + 1).padStart(2, '0')}`; 
 
         const newStudent = new StudentRecord({
-            studentId: newStudentId, // Assign the generated student ID
+            studentId: newStudentId,
             name,
             email,
             password: hashedPassword,
             role: 'student',
-            selectedCourses: selectedCourses || [] // Store selected courses
+            selectedCourses: selectedCourses || [] 
         });
 
         await newStudent.save();
@@ -67,29 +65,28 @@ router.post('/register-student', async (req, res) => {
     }
 });
 
-// Admin Registration Route (Example - adapt to your needs)
+// Admin Registration Route
 router.post('/register-admin', async (req, res) => {
     try {
-        const { email, password, confirmPassword } = req.body; // Adjust fields as needed
+        const { email, password, confirmPassword } = req.body;
 
         if (password !== confirmPassword) {
             return res.status(400).send('Passwords do not match!');
         }
 
-        const existingAdmin = await AttendanceManager.findOne({ email }); // Use your Admin model
+        const existingAdmin = await AttendanceManager.findOne({ email });
         if (existingAdmin) {
             return res.status(400).send('Admin already exists!');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newAdmin = new AttendanceManager({  // Use your Admin model
+        const newAdmin = new AttendanceManager({ 
             email,
             password: hashedPassword,
-            role: 'admin'  // Or whatever role designation you use
-            // ... any other admin fields ...
+            role: 'admin' 
         });
         await newAdmin.save();
-        res.redirect('/login'); // Or another admin success redirect
+        res.redirect('/login');
 
     } catch (error) {
         console.error("Admin Registration Error:", error);

@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <title>Attendance Report</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- Include Moment.js -->
-</head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <body>
     <h1>Attendance Report</h1>
     <table class="report-table">
@@ -33,24 +32,5 @@
             <% }) %>
         </tbody>
     </table>
-
-    <!-- <script>
-        function generateHTML(data) {
-            let html = '<h1>Attendance Report</h1><table><tr><th>Index</th><th>Student Name</th><th>Email</th><th>Course</th><th>Join Time</th><th>Leave Time</th><th>Status</th><th>Date</th></tr>';
-            data.forEach(row => {
-                html += `<tr>
-                    <td>${row.index}</td>
-                    <td>${row.studentName}</td>
-                    <td>${row.emailAddress}</td>
-                    <td>${row.lectureJoinTime ? moment(row.lectureJoinTime).format('hh:mm A') : 'N/A'}</td>
-                    <td>${row.lectureLeaveTime ? moment(row.lectureLeaveTime).format('hh:mm A') : 'N/A'}</td>
-                    <td>${row.attendanceStatus}</td>
-                    <td>${moment(row.date).format('YYYY-MM-DD')}</td>
-                </tr>`;
-            });
-            html += '</table>';
-            return html;
-        }
-    </script> -->
 </body>
 </html>

@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title><%= course %> Lecture</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- Link to your style.css -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
         <h1><%= course %> Lecture</h1>
     </header>
-    <div class="container"> <!-- Added a container class -->
+    <div class="container"> 
         <div id="content">
             <p>You have joined the <%= course %> lecture.</p>
-            <button id="leaveLectureButton" class="btn">Leave Lecture</button> <!-- Added class for styling -->
+            <button id="leaveLectureButton" class="btn">Leave Lecture</button> 
         </div>
     </div>
 
@@ -21,7 +21,7 @@
 
         // Function to leave the lecture
         document.getElementById('leaveLectureButton').onclick = async function() {
-            const leaveTime = new Date().toISOString(); // Capture the leave time
+            const leaveTime = new Date().toISOString();
             const response = await fetch('/leaveLecture', {
                 method: 'POST',
                 headers: {
@@ -32,7 +32,7 @@
 
             if (response.ok) {
                 alert('You have left the lecture successfully.');
-                window.location.href = '/student-dashboard'; // Redirect back to the dashboard
+                window.location.href = '/student-dashboard';
             } else {
                 alert('Error leaving lecture');
             }

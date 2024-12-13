@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-
-//Defining the schema for the AttendanceManager
 const attendanceManagerSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -19,7 +17,6 @@ const attendanceManagerSchema = new mongoose.Schema({
         enum: ['Attendance Manager', 'Admin'],
     },
 }, {
-    //timestamps: true,
 });
 
 const AttendanceManager = mongoose.model('AttendanceManager', attendanceManagerSchema);

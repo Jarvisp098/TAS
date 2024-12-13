@@ -9,10 +9,10 @@ exports.addStudent = async (req, res) => {
 
         // Fetch the last studentId from the database
         const lastStudent = await StudentRecord.findOne().sort({ studentId: -1 }).exec();
-        let lastStudentId = lastStudent ? parseInt(lastStudent.studentId.replace('TAS', '')) : 0; // Extract the numeric part and convert to integer
+        let lastStudentId = lastStudent ? parseInt(lastStudent.studentId.replace('TAS', '')) : 0; 
 
         // Generate the new studentId
-        const newStudentId = `TAS${String(lastStudentId + 1).padStart(2, '0')}`; // Increment and format
+        const newStudentId = `TAS${String(lastStudentId + 1).padStart(2, '0')}`; 
 
         // Check if the new studentId already exists (should not happen with this logic)
         const existingStudent = await StudentRecord.findOne({ studentId: newStudentId });
@@ -21,15 +21,15 @@ exports.addStudent = async (req, res) => {
         }
 
         // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const student = new StudentRecord({
-            studentId: newStudentId, // Use the custom formatted student ID
+            studentId: newStudentId,
             name,
             email,
-            password: hashedPassword, // Store the hashed password
+            password: hashedPassword,
             role: 'student',
-            selectedCourses: selectedCourses || [] // Ensure selectedCourses is included
+            selectedCourses: selectedCourses || [] 
         });
 
         await student.save();
@@ -44,14 +44,14 @@ exports.addStudent = async (req, res) => {
 
 exports.deleteStudent = async (req, res) => {
     try {
-        const { studentId } = req.body; // Get studentId from the request body
+        const { studentId } = req.body; 
 
         const result = await StudentRecord.deleteOne({ studentId: studentId });
 
         if (result.deletedCount === 0) {
             return res.status(404).send('Student not found');
         } else {
-            res.redirect('/home'); // Redirect after successful deletion
+            res.redirect('/admin-dashboard'); 
         }
     } catch (error) {
         console.log('Error deleting student:', error);
@@ -74,7 +74,7 @@ exports.updateStudent = async (req, res) => {
             return res.status(404).send('Student not found');
         }
 
-        res.redirect('/edit-student'); // Redirect back to the edit student page
+        res.redirect('/admin-dashboard');
     } catch (error) {
         console.error('Error updating student:', error);
         res.status(500).send('Internal Server Error');
@@ -106,7 +106,7 @@ exports.updateAttendance = async (req, res) => {
             await LectureAttendance.create({
                 userId: studentID,
                 joinTime: new Date(),
-                course: req.body.course // Ensure course is included
+                course: req.body.course
             });
         }
         res.redirect('/home');

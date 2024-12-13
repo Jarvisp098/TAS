@@ -76,22 +76,17 @@
     </div>
 
     <script>
-        let reportData = []; // Global variable to store report data
-
+        let reportData = [];
         // Function to show the selected section
         function showSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none'; // Hide all sections
+                section.style.display = 'none';
             });
+
+            document.getElementById('editStudentContainer').style.display = 'none';
+
+            document.getElementById(sectionId).style.display = 'block';
     
-            // Hide the edit student container when switching sections
-            document.getElementById('editStudentContainer').style.display = 'none'; // Hide the edit student form
-    
-            // Show the selected section
-            document.getElementById(sectionId).style.display = 'block'; // Show the selected section
-    
-            // Load data for the dashboard if it's the dashboard section
             if (sectionId === 'dashboard') {
                 loadDashboardData();
             }
@@ -110,7 +105,7 @@
             fetch('/api/getAttendancePercentage')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById ('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
+                    document.getElementById ('attendancePercentage').innerText = data.javaPercentage + '%';
                 })
                 .catch(error => console.error('Error fetching attendance percentage:', error));
         }
@@ -121,8 +116,8 @@
                 fetch('/api/getJavaEnrolledCount')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('totalStudents').innerText = data.javaCount; // Update totalStudents card with Java count
-                        fetchAttendancePercentage('Java'); // Fetch attendance percentage for Java
+                        document.getElementById('totalStudents').innerText = data.javaCount;
+                        fetchAttendancePercentage('Java');
                     })
                     .catch(error => {
                         console.error('Error fetching Java enrolled count:', error);
@@ -134,8 +129,8 @@
                 fetch('/api/getPythonEnrolledCount')
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('totalStudents').innerText = data.pythonCount; // Update totalStudents card with Python count
-                        fetchAttendancePercentage('Python'); // Fetch attendance percentage for Python
+                        document.getElementById('totalStudents').innerText = data.pythonCount;
+                        fetchAttendancePercentage('Python');
                     })
                     .catch(error => {
                         console.error('Error fetching Python enrolled count:', error);
@@ -148,9 +143,9 @@
             fetch('/api/getAttendancePercentage')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('attendancePercentage').innerText = data.javaPercentage + '%'; // Default to Java
+                    document.getElementById('attendancePercentage').innerText = data.javaPercentage + '%';
                     if (course === 'Python') {
-                        document.getElementById('attendancePercentage').innerText = data.pythonPercentage + '%'; // Update to Python if specified
+                        document.getElementById('attendancePercentage').innerText = data.pythonPercentage + '%';
                     }
                 })
                 .catch(error => {
@@ -159,46 +154,43 @@
         }
 
         function showEditStudentForm() {
-            // Hide all sections first
             document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none'; // Hide all sections
+                section.style.display = 'none';
             });
         
-            // Now show the edit student container
-            fetch('/api/edit-student-form') // Adjust the path to your editStudentForm.ejs
+            //edit student container
+            fetch('/api/edit-student-form') 
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('editStudentContainer').innerHTML = html; // Insert the form HTML
-                    document.getElementById('editStudentContainer').style.display = 'block'; // Show the form
+                    document.getElementById('editStudentContainer').innerHTML = html; 
+                    document.getElementById('editStudentContainer').style.display = 'block'; 
         
-                    // Attach the event listener for the fetch button here
+                    
                     document.getElementById('fetchStudentBtn').addEventListener('click', async () => {
-                        const studentId = document.getElementById('studentId').value; // Get the student ID from the input field
+                        const studentId = document.getElementById('studentId').value;
                         if (!studentId) {
                             alert('Please enter a Student ID');
                             return;
                         }
         
                         try {
-                            const response = await fetch(`/api/get-student/${studentId}`); // Fetch student data from the server
+                            const response = await fetch(`/api/get-student/${studentId}`);
                             if (!response.ok) {
                                 throw new Error('Network response was not ok');
                             }
                             const data = await response.json();
         
-                            // Check if student data is returned
                             if (data.student) {
-                                // Display the student data in the studentInfo div
                                 document.getElementById('studentInfo').innerHTML = `
                                     <p><strong>Student ID:</strong> ${data.student.studentId}</p>
                                     <p><strong>Name:</strong> ${data.student.name}</p>
                                     <p><strong>Email:</strong> ${data.student.email}</p>
                                     <p><strong>Selected Courses:</strong> ${data.student.selectedCourses.join(', ')}</p>
                                 `;
-                                document.getElementById('studentData').style.display = 'block'; // Show the student data section
+                                document.getElementById('studentData').style.display = 'block'; 
                             } else {
                                 document.getElementById('studentInfo').innerHTML = '<p>Student not found.</p>';
-                                document.getElementById('studentData').style.display = 'block'; // Show the student data section
+                                document.getElementById('studentData').style.display = 'block';
                             }
                         } catch (error) {
                             console.error('Error fetching student data:', error);
@@ -212,9 +204,9 @@
         }
     
         function fetchStudentData() {
-            const studentId = document.getElementById('studentId').value; // Get the student ID from the input
+            const studentId = document.getElementById('studentId').value;
     
-            fetch(`/api/get-student/${studentId}`) // Call the API endpoint
+            fetch(`/api/get-student/${studentId}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Student not found');
@@ -222,7 +214,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Populate the form with the fetched student data
                     document.getElementById('name').value = data.student.name;
                     document.getElementById('email').value = data.student.email;
                 })
@@ -234,7 +225,7 @@
     
 
         function loadReport() {
-            fetch('/api/report') // Ensure this endpoint is correct
+            fetch('/api/report') 
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -242,14 +233,12 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Store the report data globally
+                    
                     reportData = data;
-
-                    // Clear the current report content
+                    
                     const reportContent = document.getElementById('reportContent');
                     reportContent.innerHTML = '';
 
-                    // Create a table to display the report
                     let reportTable = '<table class="report-table"><caption>Attendance Report</caption><thead><tr><th>Index</th><th>Date</th><th>Student Name</th><th>Email Address</th><th>Course Enrolled</th><th>Lecture Join Time</th><th>Lecture Leave Time</th><th>Attendance Status</th></tr></thead><tbody>';
 
                     data.forEach(record => {
@@ -292,8 +281,8 @@
                     record.studentName,
                     record.emailAddress,
                     record.courseEnrolled,
-                    record.lectureJoinTime ? moment(record.lectureJoinTime).format('hh:mm A') : 'N/A', // Format time with Moment.js
-                    record .lectureLeaveTime ? moment(record.lectureLeaveTime).format('hh:mm A') : 'N/A', // Format time with Moment.js
+                    record.lectureJoinTime ? moment(record.lectureJoinTime).format('hh:mm A') : 'N/A',
+                    record .lectureLeaveTime ? moment(record.lectureLeaveTime).format('hh:mm A') : 'N/A',
                     record.attendanceStatus
                 ];
                 csvRows.push(row.join(','));
@@ -310,35 +299,33 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Show the home section by default on page load
             showSection('home');
-        
-            // Add event listener for hovering the sidebar hover area
+
             const sidebar = document.querySelector('.main-menu');
             const hoverArea = document.querySelector('.sidebar-hover-area');
             
             hoverArea.addEventListener('mouseenter', () => {
                 sidebar.classList.remove('collapsed');
-                sidebar.classList.add('expanded'); // Add expanded class
-                document.getElementById('content').style.marginLeft = '250px'; // Shift content right
+                sidebar.classList.add('expanded');
+                document.getElementById('content').style.marginLeft = '250px';
             });
         
             sidebar.addEventListener('mouseenter', () => {
                 sidebar.classList.remove('collapsed');
-                sidebar.classList.add('expanded'); // Add expanded class
-                document.getElementById('content').style.marginLeft = '250px'; // Shift content right
+                sidebar.classList.add('expanded');
+                document.getElementById('content').style.marginLeft = '250px';
             });
         
             hoverArea.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
-                sidebar.classList.remove('expanded'); // Remove expanded class
-                document.getElementById('content').style.marginLeft = '60px'; // Shift content back
+                sidebar.classList.remove('expanded');
+                document.getElementById('content').style.marginLeft = '60px';
             });
         
             sidebar.addEventListener('mouseleave', () => {
                 sidebar.classList.add('collapsed');
-                sidebar.classList.remove('expanded'); // Remove expanded class
-                document.getElementById('content').style.marginLeft = '60px'; // Shift content back
+                sidebar.classList.remove('expanded');
+                document.getElementById('content').style.marginLeft = '60px';
             });
         });
     </script>

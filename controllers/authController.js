@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const StudentRecord = require('../models/studentRecord');
-const AttendanceManager = require('../models/attendanceManager.js'); // Require both models
+const AttendanceManager = require('../models/attendanceManager.js');
 require('dotenv').config();
 
 exports.login = async (req, res) => {
-    const { email, password, studentId } = req.body; // Include studentId in the request body
+    const { email, password, studentId } = req.body;
     try {
         let user;
         let redirectPath;
@@ -39,32 +39,30 @@ exports.login = async (req, res) => {
             if (!result) {
                 return res.status(401).send('Invalid credentials');
             }
-            redirectPath = 'student-dashboard';  // No .ejs extension
+            redirectPath = 'student-dashboard';  
             userIdForJWT = user._id.toString();
         }
 
-        const userName = user.name || user.email;  // For the view
+        const userName = user.name || user.email;  
 
-        // Include selectedCourses in the JWT payload
         const token = jwt.sign({ id: userIdForJWT, role: user.role, selectedCourses: user.selectedCourses }, 'seceret_key');
-        res.cookie('jwt', token, { maxAge: 5 * 60 * 1000, httpOnly: true, secure: true }); // Secure for HTTPS
+        res.cookie('jwt', token, { maxAge: 5 * 60 * 1000, httpOnly: true, secure: true }); 
 
-        // Render the appropriate dashboard with user data and success message
         const successMessage = `Login successful! Welcome, ${userName}.`;
-        // Render the appropriate dashboard with user data
+       
         res.render(redirectPath, { user, studentName: userName, studentEmail: user.email });
 
     } catch (error) {
         console.error("Login Error:", error);
-        res.status(500).send('Internal Server Error'); // Corrected status code
+        res.status(500).send('Internal Server Error'); 
     }
 };
 
 exports.register = async (req, res) => {
     const { name, email, password, confirmPassword } = req.dy;
-    const selectedCourses = req.body.course || []; // Capture selected courses as an array
+    const selectedCourses = req.body.course || []; 
 
-    // Log the selected courses for debugging
+   
     console.log("Selected Courses:", selectedCourses);
 
     try {
@@ -83,10 +81,10 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             role: 'student',
-            selectedCourses: selectedCourses // Store selected courses
+            selectedCourses: selectedCourses 
         });
         await newStudent.save();
-        console.log("New Student Registered:", newStudent); // Log the new student object
+        console.log("New Student Registered:", newStudent); 
         res.redirect('/login');
 
     } catch (error) {
@@ -96,6 +94,6 @@ exports.register = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    res.clearCookie('jwt', { httpOnly: true, secure: true }); // Secure for HTTPS
+    res.clearCookie('jwt', { httpOnly: true, secure: true });
     res.redirect('/login');
 };

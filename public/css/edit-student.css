@@ -1,52 +1,52 @@
 h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: #3D9970; /* Header color */
+    color: #3D9970;
 }
 
 .form-section {
-    background: #fff; /* White background for forms */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    padding: 20px; /* Padding inside the section */
-    margin-bottom: 20px; /* Space between sections */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .form-section h3 {
-    margin-top: 0; /* Remove top margin */
-    color: #34495E; /* Darker color for section headers */
+    margin-top: 0;
+    color: #34495E;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"] {
-    width: 100%; /* Full width */
-    padding: 10px; /* Padding inside inputs */
-    border: 1px solid #ddd; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    margin-bottom: 15px; /* Space between inputs */
-    box-sizing: border-box; /* Include padding in width */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
 }
 
 button {
-    padding: 10px 20px; /* Padding for buttons */
-    background-color: #3D9970; /* Button color */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size */
-    transition: background-color 0.3s; /* Smooth transition */
+    padding: 10px 20px;
+    background-color: #3D9970;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #2C3E50; /* Darker shade on hover */
+    background-color: #2C3E50;
 }
 
 #studentData {
-    margin-top: 20px; /* Space above student data display */
-    padding: 10px; /* Padding inside the student data display */
-    background: #f9f9f9; /* Light background for student data */
-    border: 1px solid #ddd; /* Light border */
-    border-radius: 5px; /* Rounded corners */
+    margin-top: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }

@@ -13,12 +13,12 @@ const attendanceSchema = new mongoose.Schema({
 });
 
 const studentRecordSchema = new mongoose.Schema({
-    studentId: { type: String, unique: true, required: true }, // Add studentId field
+    studentId: { type: String, unique: true, required: true }, 
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ['student', 'admin'] },
-    selectedCourses: [{ type: String, enum: ['Java', 'Python'] }], // Array of courses
+    selectedCourses: [{ type: String, enum: ['Java', 'Python'] }], 
     attendance: {
         type: [attendanceSchema],
         default: [],

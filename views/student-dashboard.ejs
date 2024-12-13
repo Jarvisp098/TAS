@@ -46,7 +46,6 @@
     <div id="content">
         <div id="home" class="section">
             <h1>Welcome, <%= user.name %></h1>
-            <!-- You can add any other content for the home section here -->
         </div>
 
         <div id="joinLecture" class="section" style="display: none;">
@@ -63,7 +62,6 @@
         <div id="attendanceReport" class="section" style="display: none;">
             <h2>Attendance Report</h2>
             <div id="reportContent">
-                <!-- This is where the attendance report will be displayed -->
                 <p>Loading attendance report...</p>
             </div>
         </div>
@@ -75,15 +73,14 @@
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.section');
             sections.forEach(section => {
-                section.style.display = 'none'; // Hide all sections
+                section.style.display = 'none';
             });
     
             const activeSection = document.getElementById(sectionId);
             if (activeSection) {
-                activeSection.style.display = 'block'; // Show the selected section
+                activeSection.style.display = 'block';
             }
     
-            // Load attendance report if the section is active
             if (sectionId === 'attendanceReport') {
                 loadAttendanceReport();
             }
@@ -94,9 +91,9 @@
             const sidebar = document.querySelector('.main-menu');
             const hoverArea = document.querySelector('.sidebar-hover-area');
         
-            // Start with the sidebar collapsed
-            sidebar.classList.add('collapsed'); // Start collapsed
-            showSection('home'); // Show the home section by default
+            
+            sidebar.classList.add('collapsed'); 
+            showSection('home'); 
         
             hoverArea.addEventListener('mouseenter', () => {
                 sidebar.classList.remove('collapsed');
@@ -115,12 +112,11 @@
             });
         });
     
-        // Function to join a lecture (for example, sending a timestamp)
+        // Function to join a lecture
         async function joinLecture(course) {
-            const joinTime = new Date().toISOString(); // Get the current time in ISO format
-            console.log(`Attempting to join lecture for course: ${course} at ${joinTime}`); // Log the course and join time
+            const joinTime = new Date().toISOString(); 
+            console.log(`Attempting to join lecture for course: ${course} at ${joinTime}`);
     
-            // Ensure course is either 'Java' or 'Python'
             const validCourses = ['Java', 'Python'];
             if (!validCourses.includes(course)) {
                 console.error(`Invalid course: ${course}`);
@@ -132,20 +128,20 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ course, joinTime }) // Include joinTime in the request body
+                body: JSON.stringify({ course, joinTime })
             });
     
-            console.log('Response status:', response.status); // Log the response status
+            console.log('Response status:', response.status); 
     
             if (response.ok) {
                 // If the response is successful, redirect to the lecture page
                 const lecturePageUrl = `/lecture/${course}`;
-                alert(`Joined ${course} lecture successfully!`); // Show success message
-                window.location.href = lecturePageUrl; // Redirect to the lecture page
+                alert(`Joined ${course} lecture successfully!`);
+                window.location.href = lecturePageUrl;
             } else {
                 // Handle errors here
-                const errorMessage = await response.text(); // Get the error message from the response
-                console.log('Error message from server:', errorMessage); // Log the error message
+                const errorMessage = await response.text();
+                console.log('Error message from server:', errorMessage);
                 alert(`Error joining lecture: ${errorMessage}`);
             }
         }
@@ -153,19 +149,19 @@
         // Function to load the attendance report
         async function loadAttendanceReport() {
             const reportContent = document.getElementById('reportContent');
-            reportContent.innerHTML = '<p>Loading attendance report...</p>'; // Show loading message
+            reportContent.innerHTML = '<p>Loading attendance report...</p>'; 
     
             try {
-                const response = await fetch('/student-report'); // Fetch the student report
+                const response = await fetch('/student-report'); 
                 if (response.ok) {
-                    const reportData = await response.text(); // Get the report data as text
-                    reportContent.innerHTML = reportData; // Display the report
+                    const reportData = await response.text(); 
+                    reportContent.innerHTML = reportData; 
                 } else {
-                    reportContent.innerHTML = '<p>Error loading attendance report.</p>'; // Show error message
+                    reportContent.innerHTML = '<p>Error loading attendance report.</p>';
                 }
             } catch (error) {
                 console.error('Error fetching attendance report:', error);
-                reportContent.innerHTML = '<p>Error loading attendance report.</p>'; // Show error message
+                reportContent.innerHTML = '<p>Error loading attendance report.</p>';
             }
         }
     </script>
